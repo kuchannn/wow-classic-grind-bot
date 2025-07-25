@@ -1,0 +1,128 @@
+{
+  "ClassName": "Hunter",
+  //"Mode": "AttendedGrind",
+  //"PathFilename": "1_Gnome.json",
+  "Wait": {
+    "Sequence": [
+      {
+        "Cost": 0.9,
+        "Name": "User",
+        "Requirement": "MenuOpen || ChatInputVisible"
+      }
+    ]
+  },
+  "Paths": [
+    {
+      "PathFilename": "1-5_Gnome.json",
+      "PathThereAndBack": false,
+      "PathReduceSteps": false,
+      "Requirements": [
+        "Level < 4"
+      ]
+    },
+    {
+      "PathFilename": "_pack\\1-20\\Dwarf.Gnome\\1-4_Dun Morogh.json",
+      "PathThereAndBack": true,
+      "PathReduceSteps": false,
+      "Requirements": [
+        "Level < 5"
+      ]
+    },
+    {
+      "PathFilename": "_pack\\1-20\\Dwarf.Gnome\\4-6_Dun Morogh.json",
+      "PathThereAndBack": false,
+      "PathReduceSteps": false
+    }
+  ],
+  "Pull": {
+    "Sequence": [
+      {
+        "Name": "Auto Shot",
+        "Key": "3",
+        "BeforeCastStop": true,
+        "AfterCastWaitCombat": true,
+        "Item": true,
+        "Requirements": [
+          "HasRangedWeapon",
+          "!InMeleeRange",
+          "!AutoShot",
+          "HasAmmo"
+        ]
+      }
+    ]
+  },
+  "Combat": {
+    "Sequence": [
+      {
+        "Name": "Auto Shot",
+        "Key": "3",
+        "Item": true,
+        "BeforeCastStop": true,
+        "Requirements": [
+          "HasRangedWeapon",
+          "!InMeleeRange",
+          "!AutoShot",
+          "HasAmmo"
+        ]
+      },
+      {
+        "Name": "Stepback",
+        "Key": "S",
+        "PressDuration": 3000,
+        "BaseAction": true,
+        "Requirements": [
+          "TargetsMe",
+          "LastAutoShotMs < 400",
+          "!InMeleeRange",
+          "AutoShot"
+        ],
+        "Interrupt": "RangedSwing < -500 && TargetAlive"
+      },
+      {
+        "Name": "Raptor Strike",
+        "Key": "4",
+        "WhenUsable": true,
+        "AfterCastWaitSwing": true,
+        "Requirements": [
+          "MainHandSwing > -400",
+          "InMeleeRange",
+          "!AutoShot"
+        ]
+      },
+      {
+        "Name": "AutoAttack",
+        "Requirements": [
+          "InMeleeRange"
+        ]
+      },
+      {
+        "Name": "Approach",
+        "Log": false,
+        "Requirements": [
+          "InMeleeRange"
+        ]
+      }
+    ]
+  },
+  "NPC": {
+    "Sequence": [
+      {
+        "Cost": 6,
+        "Name": "Repair",
+        "Key": "C",
+        "Requirement": "Durability% < 35",
+        "PathFilename": "1_Gnome_Vendor.json"
+      },
+      {
+        "Cost": 6,
+        "Name": "Sell",
+        "Key": "C",
+        "Requirements": [
+          "BagFull",
+          "BagGreyItem"
+        ],
+        "PathFilename": "1_Gnome_Vendor.json"
+      }
+    ]
+  }
+}

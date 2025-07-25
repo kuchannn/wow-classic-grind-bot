@@ -1,0 +1,142 @@
+{
+  "ClassName": "Warlock",
+  "Loot": true,
+  "NPCMaxLevels_Below": 4,
+  "PathFilename": "5_Gnome.json",
+  "PathThereAndBack": false,
+  "PathReduceSteps": false,
+  "IntVariables": {
+    "DOT_MIN_HEALTH%": 35
+  },
+  "Pull": {
+    "Sequence": [
+      {
+        "Name": "Immolate",
+        "Key": "5",
+        "HasCastBar": true
+      }
+    ]
+  },
+  "Combat": {
+    "Sequence": [
+      {
+        "Name": "Immolate",
+        "Key": "5",
+        "HasCastBar": true,
+        "Requirements": [
+          "TargetHealth% > DOT_MIN_HEALTH%",
+          "!Immolate"
+        ]
+      },
+      {
+        "Name": "Curse of Agony",
+        "Key": "1",
+        "Requirements": [
+          "TargetHealth% > DOT_MIN_HEALTH%",
+          "!Curse of Agony"
+        ],
+        "Log": false
+      },
+      {
+        "Name": "Corruption",
+        "Key": "7",
+        "HasCastBar": true,
+        "Requirements": [
+          "TargetHealth% > DOT_MIN_HEALTH%",
+          "!Corruption"
+        ]
+      },
+      {
+        "Name": "Shadow Bolt",
+        "Key": "2",
+        "HasCastBar": true,
+        "Cooldown": 8000
+      },
+      {
+        "Name": "Shoot",
+        "Key": "0",
+        "Item": true,
+        "Requirements": [
+          "HasRangedWeapon",
+          "!Shooting",
+          "SpellInRange:1"
+        ]
+      },
+      {
+        "Name": "AutoAttack",
+        "Requirements": [
+          "!HasRangedWeapon",
+          "!Casting"
+        ]
+      },
+      {
+        "Name": "Approach",
+        "Requirements": [
+          "!Casting",
+          "AutoAttacking"
+        ]
+      }
+    ]
+  },
+  "Parallel": {
+    "Sequence": [
+      {
+        "Name": "Food",
+        "Key": "=",
+        "Requirement": "Health% < 50"
+      },
+      {
+        "Name": "Drink",
+        "Key": "-",
+        "Requirement": "Mana% < 40"
+      }
+    ]
+  },
+  "Adhoc": {
+    "Sequence": [
+      {
+        "Name": "Demon Skin",
+        "Key": "3",
+        "Requirement": "!Demon Skin"
+      },
+      {
+        "Name": "Summon Imp",
+        "Key": "4",
+        "HasCastBar": true,
+        "Requirement": "!Has Pet",
+        "AfterCastWaitCastbar": true,
+        "AfterCastAuraExpected": true
+      },
+      {
+        "Name": "Life Tap",
+        "Key": "8",
+        "Charge": 2,
+        "Requirements": [
+          "Health% > 70",
+          "Mana% < 60"
+        ]
+      }
+    ]
+  },
+  "NPC": {
+    "Sequence": [
+      {
+        "Name": "Repair",
+        "Key": "C",
+        "Requirement": "Durability% < 35",
+        "PathFilename": "5_Gnome_Vendor.json",
+        "Cost": 6
+      },
+      {
+        "Name": "Sell",
+        "Key": "C",
+        "Requirements": [
+          "BagFull",
+          "BagGreyItem"
+        ],
+        "PathFilename": "5_Gnome_Vendor.json",
+        "Cost": 6
+      }
+    ]
+  }
+}

@@ -1,0 +1,280 @@
+{
+  "ClassName": "DeatkKnight",
+  "Mode": "AttendedGrind", //Grind
+  "Loot": true,
+  "PathFilename": "_pack\\40-50\\The Hinterlands\\41-42 wolves.json", // todo update profile
+  "PathReduceSteps": true,
+  "PathThereAndBack": false,
+  "Mount": { "Key": "N0"},
+  "IntVariables": {
+    "MIN_HP_FOOD%": 40,
+    "MIN_RUNE_TO_DUMP": 40,
+    "TDebuff_Frost Fever": 237522,
+    "TDebuff_Blood Plague": 237514,
+    "MIN_TIME_REFRESH": 3500
+  },
+  "Form": {
+    "Sequence": [
+      {
+        "Name": "Blood Presence",
+        "Key": "F1",
+        "Form": "DeathKnight_Blood_Presence"
+      },
+      {
+        "Name": "Frost Presence",
+        "Key": "F2",
+        "Form": "DeathKnight_Frost_Presence"
+      },
+      {
+        "Name": "Unholy Presence",
+        "Key": "F3",
+        "Form": "DeathKnight_Unholy_Presence"
+      }
+    ]
+  },
+  "Pull": {
+    "Sequence": [
+      {
+        "Name": "Army of the Dead",
+        "Key": "N5",
+        "WhenUsable": true,
+        "HasCastbar": true,
+        "AfterCastWaitCastbar": true
+      },
+      {
+        "Name": "Death Coil",
+        "Key": "8",
+        "WhenUsable": true,
+        "Requirements": [
+          "MinRange > 25",
+          "SpellInRange:1",
+          "RunicPower >= MIN_RUNE_TO_DUMP"
+        ],
+        "AfterCastWaitCombat": true
+      },
+      {
+        "Name": "Icy Touch",
+        "Key": "6",
+        "WhenUsable": true,
+        "Requirements": [
+          "!TargetCastingSpell",
+          "!Frost Fever",
+          "SpellInRange:0"
+        ],
+        "AfterCastAuraExpected": true,
+        "AfterCastWaitCombat": true
+      },
+      {
+        "Name": "Death Grip",
+        "Key": "0",
+        "WhenUsable": true,
+        "Requirements": [
+          "SpellInRange:2",
+          "!Falling"
+        ],
+        "AfterCastWaitCombat": true,
+        "AfterCastWaitMeleeRange": true
+      }
+    ]
+  },
+  "Combat": {
+    "Sequence": [
+      {
+        "Name": "Trinket 1",
+        "Key": "N1",
+        "Item": true,
+        "WhenUsable": true,
+        "Requirements": [
+          "InMeleeRange"
+        ]
+      },
+      {
+        "Name": "Trinket 2",
+        "Key": "N2",
+        "Item": true,
+        "WhenUsable": true,
+        "Requirements": [
+          "InMeleeRange"
+        ]
+      },
+      {
+        "Name": "Mind Freeze",
+        "Key": "9",
+        "WhenUsable": true,
+        "Requirements": [
+          "InMeleeRange",
+          "TargetCastingSpell"
+        ]
+      },
+      {
+        "Name": "Pestilenc",
+        "Key": "F6",
+        "WhenUsable": true,
+        "Requirements": [
+          "Frost Fever && Blood Plague && (TDebuff_Frost Fever < MIN_TIME_REFRESH || TDebuff_Blood Plague < MIN_TIME_REFRESH)",
+          "InMeleeRange"
+        ]
+      },
+      {
+        "Name": "Blood Tap",
+        "Key": "N6",
+        "WhenUsable": true,
+        "Requirements": [
+          "!Blood Tap",
+          "BloodRune <= 1"
+        ]
+      },
+      {
+        "Name": "Empower Rune Weapon",
+        "Key": "N3",
+        "WhenUsable": true,
+        "Requirements": [
+          "TotalRune == 0",
+          "RunicPower <= 105",
+          "InMeleeRange"
+        ]
+      },
+      {
+        "Name": "Unbreakable Armor",
+        "Key": "N4",
+        "WhenUsable": true,
+        "Requirements": [
+          "InMeleeRange"
+        ]
+      },
+      {
+        "Name": "Howling Blast",
+        "Key": "7",
+        "WhenUsable": true,
+        "Requirements": [
+          "Freezing Fog",
+          "SpellInRange:0"
+        ]
+      },
+      {
+        "Name": "Death Strike",
+        "Key": "F5",
+        "WhenUsable": true,
+        "Requirements": [
+          "Health% < 30"
+        ]
+      },
+      {
+        "Name": "Frost Strike",
+        "Key": "2",
+        "WhenUsable": true,
+        "Requirements": [
+          "MobCount < 2",
+          "InMeleeRange"
+        ]
+      },
+      {
+        "Name": "Death Coil",
+        "Key": "8",
+        "WhenUsable": true,
+        "Requirements": [
+          "MobCount < 2",
+          "RunicPower >= 100",
+          "SpellInRange:1"
+        ]
+      },
+      {
+        "Name": "Blood Boil",
+        "Key": "1",
+        "WhenUsable": true,
+        "Requirements": [
+          "MobCount > 1",
+          "Frost Fever",
+          "Blood Plague",
+          "InMeleeRange"
+        ]
+      },
+      {
+        "Name": "Blood Strike",
+        "Key": "3",
+        "WhenUsable": true,
+        "Charge": 2,
+        "Cooldown": 2000,
+        "Requirements": [
+          "MobCount < 2",
+          "TDebuff_Frost Fever > MIN_TIME_REFRESH && TDebuff_Blood Plague > MIN_TIME_REFRESH",
+          "InMeleeRange"
+        ]
+      },
+      {
+        "Name": "Obliterate",
+        "Key": "4",
+        "WhenUsable": true,
+        "Requirements": [
+          "MobCount < 2",
+          "Frost Fever",
+          "Blood Plague",
+          "InMeleeRange"
+        ]
+      },
+      {
+        "Name": "Icy Touch",
+        "Key": "6",
+        "WhenUsable": true,
+        "Requirements": [
+          "!Frost Fever",
+          "SpellInRange:0"
+        ],
+        "AfterCastAuraExpected": true
+      },
+      {
+        "Name": "Plague Strike",
+        "Key": "5",
+        "WhenUsable": true,
+        "Requirements": [
+          "!Blood Plague",
+          "InMeleeRange"
+        ],
+        "AfterCastAuraExpected": true
+      },
+      {
+        "Name": "AutoAttack"
+      },
+      {
+        "Name": "Approach",
+        "Log": false
+      }
+    ]
+  },
+  "Adhoc": {
+    "Sequence": [
+      {
+        "Cost": 3.1,
+        "Name": "Horn of Winter",
+        "Key": "F4",
+        "InCombat": "i dont care",
+        "WhenUsable": true,
+        "Requirements": [
+          "!Horn of Winter || (CD_Horn of Winter <= GCD && TargetAlive && TargetHostile)",
+          "!Mounted"
+        ]
+      },
+      {
+        "Cost": 3.2,
+        "Name": "Raise Dead",
+        "Key": "F7",
+        "InCombat": "true",
+        "WhenUsable": true,
+        "Requirements": [
+          "!Has Pet",
+          "!Mounted"
+          //"BagItem:37201" //be sure to use glyph
+        ]
+      }
+    ]
+  },
+  "Parallel": {
+    "Sequence": [
+      {
+        "Name": "Food",
+        "Key": "=",
+        "Requirement": "Health% < MIN_HP_FOOD%"
+      }
+    ]
+  }
+}

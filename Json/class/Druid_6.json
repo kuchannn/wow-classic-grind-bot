@@ -1,0 +1,103 @@
+{
+  "ClassName": "Druid",
+  "Loot": true,
+  "PathFilename": "_pack\\1-20\\Night elf\\05-08_Teldrassil_Lake Al Ameth - Elementals.json",
+  "PathReduceSteps": true,
+  "CheckTargetGivesExp": true,
+  "Pull": {
+    "Sequence": [
+      {
+        "Name": "Wrath",
+        "Key": "2",
+        "HasCastBar": true
+      }
+    ]
+  },
+  "Combat": {
+    "Sequence": [
+      {
+        "Name": "Healing Touch",
+        "Key": "3",
+        "HasCastBar": true,
+        "WhenUsable": true,
+        "Requirement": "Health% < 25"
+      },
+      {
+        "Name": "Rejuvenation",
+        "Key": "6",
+        "WhenUsable": true,
+        "Requirements": [
+          "Health% < 55",
+          "!Rejuvenation"
+        ]
+      },
+      {
+        "Name": "Moonfire",
+        "Key": "5",
+        "Requirements": [
+          "!Moonfire",
+          "TargetHealth% > 25"
+        ]
+      },
+      {
+        "Name": "Wrath",
+        "Key": "2",
+        "HasCastBar": true,
+        "Requirement": "TargetHealth% > 50"
+      },
+      {
+        "Name": "AutoAttack",
+        "Requirements": [
+          "!Casting"
+        ]
+      },
+      {
+        "Name": "Approach",
+        "Requirements": [
+          "!Casting",
+          "AutoAttacking"
+        ]
+      }
+    ]
+  },
+  "Adhoc": {
+    "Sequence": [
+      {
+        "Name": "Mark of the Wild",
+        "Key": "4",
+        "Requirement": "!Mark of the Wild"
+      },
+      {
+        "Name": "Thorns",
+        "Key": "7",
+        "Requirement": "!Thorns"
+      },
+      {
+        "Name": "Drink",
+        "Key": "-",
+        "Requirement": "Mana% < 30"
+      }
+    ]
+  },
+  "NPC": {
+    "Sequence": [
+      {
+        "Cost": 19,
+        "Name": "Repair",
+        "Key": "C",
+        "Requirement": "Durability% < 35",
+        "PathFilename": "5_NightElf_Vendor.json"
+      },
+      {
+        "Cost": 19,
+        "Name": "Sell",
+        "Key": "C",
+        "Requirements": [
+          "BagFull",
+          "BagGreyItem"
+        ],
+        "PathFilename": "5_NightElf_Vendor.json"
+      }
+    ]
+  }
+}

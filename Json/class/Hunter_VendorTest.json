@@ -1,0 +1,20 @@
+{
+  "ClassName": "Hunter",
+  "Paths": [
+    {
+      "PathFilename": "Brackenwall_Ammo.json",
+      "Requirements": ["Level >= 1"]
+    }
+  ],
+  "NPC": {
+    "Sequence": [
+      {
+        "Name": "Buy Ammo Zanara",
+        "PathFilename": "Brackenwall_Ammo.json",
+        "Requirements": [
+          "UIMapId == 15"
+        ]
+      }
+    ]
+  }
+} 

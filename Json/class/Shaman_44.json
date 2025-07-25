@@ -1,0 +1,128 @@
+{
+  "ClassName": "Shaman",
+  "Loot": true,
+  "Skin": true,
+  "PathFilename": "_pack\\40-50\\Tanaris\\41-43.json",
+  "PathThereAndBack": true,
+  "PathReduceSteps": true,
+  "NPCMaxLevels_Below": 7,
+  "NPCMaxLevels_Above": 2,
+  "Mount": { "Key": "N1"},
+  "Pull": {
+    "Sequence": [
+      {
+        "Name": "Lightning Bolt",
+        "Key": "2",
+        "HasCastBar": true
+      }
+    ]
+  },
+  "Combat": {
+    "Sequence": [
+      {
+        "Name": "Healing Wave",
+        "Key": "3",
+        "Requirements": [
+          "Health%<40",
+          "TargetHealth%>15"
+        ],
+        "Cooldown": 5000,
+        "HasCastBar": true,
+        "Log": false
+      },
+      {
+        "Name": "Lightning Bolt",
+        "Key": "2",
+        "HasCastBar": true,
+        "Requirement": "!InMeleeRange"
+      },
+      {
+        "Name": "Stoneclaw Totem",
+        "Key": "F9",
+        "Requirement": "MobCount>1",
+        "Cooldown": 30000,
+        "Log": false
+      },
+      {
+        "Name": "Searing Totem",
+        "Key": "F7",
+        "Requirement": "MobCount>1",
+        "Cooldown": 15000,
+        "Log": false
+      },
+      {
+        "Name": "War Stomp",
+        "Key": "0",
+        "Requirements": [
+          "Race:Tauren",
+          "Health%<49",
+          "MobCount>1"
+        ],
+        "WhenUsable": true
+      },
+      {
+        "Name": "Stormstrike",
+        "Key": "1",
+        "Requirements": [
+          "Mana%>40",
+          "InMeleeRange"
+        ],
+        "Log": false,
+        "Cooldown": 5000
+      },
+      {
+        "Name": "Fire shock",
+        "Key": "4",
+        "Requirements": [
+          "Mana%>40",
+          "TargetHealth%>30"
+        ],
+        "Log": false,
+        "WhenUsable": true
+      },
+      {
+        "Name": "AutoAttack"
+      },
+      {
+        "Name": "Approach",
+        "Log": false
+      }
+    ]
+  },
+  "Adhoc": {
+    "Sequence": [
+      {
+        "Name": "Windfury Weapon",
+        "Key": "5",
+        "Requirement": "!HasMainHandEnchant",
+        "AfterCastAuraExpected": true
+      },
+      {
+        "Name": "Windfury/Falme Weapon",
+        "Key": "5",
+        "Requirement": "!HasOffHandEnchant",
+        "AfterCastAuraExpected": true
+      },
+      {
+        "Name": "Lightning Shield",
+        "Key": "7",
+        "Requirement": "!Lightning Shield",
+        "Cost": 1
+      }
+    ]
+  },
+  "Parallel": {
+    "Sequence": [
+      {
+        "Name": "Drink",
+        "Key": "9",
+        "Requirement": "Mana%<35"
+      },
+      {
+        "Name": "Food",
+        "Key": "8",
+        "Requirement": "Health%<35"
+      }
+    ]
+  }
+}

@@ -1,0 +1,192 @@
+﻿@inject IBotController botController
+@inject IAddonReader addonReader
+
+@implements IDisposable
+
+<div class="container">
+    <Card>
+        <CardHeader>
+            Class Configuration
+        </CardHeader>
+        <CardBody style="padding-bottom: 0">
+            <table class="table table-sm table-bordered">
+                <tbody>
+                    @foreach (var property in classConfig.GetType().GetProperties())
+                    {
+                        <tr>
+                            @switch (Type.GetTypeCode(property.PropertyType))
+                            {
+                                case TypeCode.String:
+                                    if (hidden.Contains(property.Name))
+                                        break;
+                                    <td>@(property.Name)</td>
+                                    <td>
+                                        <input value="@property.GetValue(classConfig)" class="form-control" disabled="@(!editables.Contains(property.Name))"
+                                               @onchange="c => { property.SetValue(classConfig, c.Value); Update(); }" />
+                                    </td>
+                                    break;
+
+                                case TypeCode.Int32:
+                                    if (hidden.Contains(property.Name))
+                                        break;
+                                    <td>@(property.Name)</td>
+                                    <td>
+                                        <input value="@property.GetValue(classConfig)" class="form-control" disabled="@(!editables.Contains(property.Name))"
+                                               @onchange="c => { if(int.TryParse(c.Value?.ToString(), out int n)) { property.SetValue(classConfig, n); Update(); } }" />
+                                    </td>
+                                    break;
+                                case TypeCode.Boolean:
+                                    if (hidden.Contains(property.Name))
+                                        break;
+                                    <td>@(property.Name)</td>
+                                    <td>
+                                        <input type="checkbox" disabled="@(!editables.Contains(property.Name))"
+                                               checked="@(CBool(property.GetValue(classConfig)))"
+                                               @onchange="c => { property.SetValue(classConfig, c.Value); Update(); }" />
+                                    </td>
+                                    break;
+                                default:
+                                    <!--<input Text="@value?.ToString()" Disabled="true" />-->
+                                    break;
+                            }
+                        </tr>
+
+                        @if (property.PropertyType == typeof(PathSettings[]))
+                        {
+                            var value = property.GetValue(classConfig, null);
+                            var array = value as PathSettings[];
+                            if (array == null) continue;
+
+
+                            <tr style="background-color: black">
+                                <td></td>
+                                <td></td>
+                            </tr>
+
+                            @foreach (var item in array)
+                            {
+                                @foreach (var innerProp in item.GetType().GetProperties())
+                                {
+                                    <tr>
+                                        @switch (Type.GetTypeCode(innerProp.PropertyType))
+                                        {
+                                            case TypeCode.String:
+                                                if (innerProp.Name == nameof(PathSettings.FileName))
+                                                    break;
+                                                <td>@(innerProp.Name)</td>
+                                                <td>
+                                                    <input value="@innerProp.GetValue(item)" class="form-control"
+                                                           disabled="@(!editables.Contains(innerProp.Name))"
+                                                           @onchange="c => { innerProp.SetValue(item, c.Value); Update(); }" />
+                                                </td>
+                                                break;
+                                            case TypeCode.Boolean:
+                                                <td>@(innerProp.Name)</td>
+                                                <td>
+                                                    <input type="checkbox"
+                                                           disabled="@(!editables.Contains(innerProp.Name))"
+                                                           checked="@(CBool(innerProp.GetValue(item)))"
+                                                           @onchange="c => { innerProp.SetValue(item, c.Value); Update(); }" />
+                                                </td>
+                                                break;
+
+                                            default:
+                                                break;
+                                        }
+                                    </tr>
+                                }
+
+                                <tr style="background-color: black">
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                            }
+                        }
+
+                    }
+                </tbody>
+            </table>
+        </CardBody>
+    </Card>
+</div>
+
+@code {
+
+    private ClassConfiguration classConfig = null!;
+
+    private HashSet<string> editables = new()
+    {
+        // Int
+        nameof(ClassConfiguration.NPCMaxLevels_Above),
+        nameof(ClassConfiguration.NPCMaxLevels_Below),
+        // booleans
+        nameof(ClassConfiguration.Skin),
+        nameof(ClassConfiguration.Mine),
+        nameof(ClassConfiguration.Herb),
+        nameof(ClassConfiguration.Salvage),
+        nameof(ClassConfiguration.Loot),
+        nameof(ClassConfiguration.LogBagChanges),
+        nameof(ClassConfiguration.UseMount),
+        nameof(ClassConfiguration.KeyboardOnly),
+        nameof(ClassConfiguration.AllowPvP),
+        nameof(ClassConfiguration.AutoPetAttack),
+        //nameof(ClassConfiguration.PathThereAndBack),
+        //nameof(ClassConfiguration.PathReduceSteps),
+        nameof(ClassConfiguration.CheckTargetGivesExp),
+
+        nameof(PathSettings.PathThereAndBack),
+        nameof(PathSettings.PathReduceSteps),
+    };
+
+    private HashSet<string> hidden = [
+        nameof(ClassConfiguration.PathThereAndBack),
+    nameof(ClassConfiguration.PathReduceSteps),
+    nameof(ClassConfiguration.PathFilename),
+    nameof(ClassConfiguration.OverridePathFilename),
+    ];
+
+    protected override void OnInitialized()
+    {
+        RefreshData();
+
+        botController.ProfileLoaded += OnProfileLoaded;
+        addonReader.AddonDataChanged += OnAddonDataChanged;
+    }
+
+    public void Dispose()
+    {
+        addonReader.AddonDataChanged -= OnAddonDataChanged;
+        botController.ProfileLoaded -= OnProfileLoaded;
+    }
+
+    private void OnAddonDataChanged()
+    {
+        base.InvokeAsync(StateHasChanged);
+    }
+
+    public void OnGet()
+    {
+        RefreshData();
+    }
+
+    private void OnProfileLoaded()
+    {
+        RefreshData();
+    }
+
+    private void RefreshData()
+    {
+        classConfig = botController.ClassConfig!;
+    }
+
+    private void Update()
+    {
+        botController.OverrideClassConfig(classConfig);
+    }
+
+    private bool CBool(object? o)
+    {
+        bool? b = (bool?)o;
+        return b.HasValue && b.Value;
+    }
+}

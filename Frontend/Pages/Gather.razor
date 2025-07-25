@@ -1,0 +1,63 @@
+﻿@page "/Gather"
+
+@inject IBotController botController
+@inject IJSRuntime JSRuntime
+
+@if (botController.ClassConfig?.Mode != Core.Mode.AttendedGather)
+{
+    <h3>Attended gather mode is not enabled in the class config file.</h3>
+    <p>
+        When this mode is active and the Gather tab in the UI is selected, it will run the path and scan the minimap for the yellow nodes which indicate a herb or mining node. When it finds a node it will stop and alert you by playing a youtube video, you will then have to manually pick the herb/mine and then start the bot again.
+    </p>
+}
+else
+{
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm">
+                <MiniMapComponent Size="400" DownScale="0.5f" OnNodeFound="NodeFoundHandler" />
+            </div>
+            <div class="col-sm">
+                <RouteComponent Size="400" />
+            </div>
+            <div class="col-sm">
+                <audio id="audio_player" controls loop></audio>
+            </div>
+        </div>
+        <div class="row">
+            <LogComponent />
+        </div>
+    </div>
+}
+
+@code {
+    private int lastAmount;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JSRuntime.InvokeVoidAsync("initAudioPlayer");
+        }
+    }
+
+    protected void NodeFoundHandler(int nodeFound)
+    {
+        if (!botController.IsBotActive)
+            return;
+
+        if (lastAmount != nodeFound)
+        {
+            lastAmount = nodeFound;
+            if (nodeFound > 0)
+            {
+                botController.MinimapNodeFound();
+                JSRuntime.InvokeVoidAsync("play");
+            }
+            else
+            {
+                JSRuntime.InvokeVoidAsync("pause");
+            }
+        }
+    }
+}

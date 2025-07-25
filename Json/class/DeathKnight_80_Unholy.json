@@ -1,0 +1,264 @@
+{
+  "ClassName": "DeatkKnight",
+  //"Mode": "AttendedGrind", //Grind
+  "Loot": true,
+  //"KeyboardOnly": true,
+  "PathFilename": "_pack\\70-80\\Zul'Drak\\76-80_Zul'Drak_Heb'Valok_spiders.json",
+  "PathReduceSteps": true,
+  "PathThereAndBack": false,
+  "Mount": { "Key": "N0"},
+  "IntVariables": {
+    "MIN_HP_FOOD%": 40,
+    "MIN_RUNE_TO_DUMP": 40,
+    "ITEM_CORPSE_DUST": 37201,
+    "TDebuff_Frost Fever": 237522,
+    "TDebuff_Blood Plague": 237514,
+    "MIN_TIME_REFRESH": 3500
+  },
+  "Form": {
+    "Sequence": [
+      {
+        "Name": "Blood Presence",
+        "Key": "F1",
+        "Form": "DeathKnight_Blood_Presence"
+      },
+      {
+        "Name": "Frost Presence",
+        "Key": "F2",
+        "Form": "DeathKnight_Frost_Presence"
+      },
+      {
+        "Name": "Unholy Presence",
+        "Key": "F3",
+        "Form": "DeathKnight_Unholy_Presence"
+      }
+    ]
+  },
+  "Pull": {
+    "Sequence": [
+      {
+        "Name": "Army of the Dead",
+        "Key": "N5",
+        "HasCastbar": true,
+        "AfterCastWaitCastbar": true
+      },
+      {
+        "Name": "Icy Touch",
+        "Key": "6",
+        "Requirements": [
+          "!TargetCastingSpell",
+          "!Frost Fever",
+          "SpellInRange:0"
+        ],
+        "AfterCastWaitCombat": true
+      },
+      {
+        "Name": "Death Grip",
+        "Key": "0",
+        "Requirements": [
+          "SpellInRange:2",
+          "!Falling"
+        ],
+        "AfterCastWaitCombat": true,
+        "AfterCastWaitMeleeRange": true
+      }
+    ]
+  },
+  "Combat": {
+    "Sequence": [
+      {
+        "Name": "Ghoul Frenzy",
+        "Key": "F8",
+        "Cooldown": 30000,
+        "Requirements": [
+          "Has Pet",
+          "Talent:Ghoul Frenzy"
+        ]
+      },
+      {
+        "Name": "Trinket 1",
+        "Key": "N1",
+        "Item": true,
+        "WhenUsable": true,
+        "Requirements": [
+          "InMeleeRange"
+        ]
+      },
+      {
+        "Name": "Trinket 2",
+        "Key": "N2",
+        "Item": true,
+        "WhenUsable": true,
+        "Requirements": [
+          "InMeleeRange"
+        ]
+      },
+      {
+        "Name": "Mind Freeze",
+        "Key": "9",
+        "Requirements": [
+          "InMeleeRange",
+          "TargetCastingSpell"
+        ]
+      },
+      {
+        "Name": "Blood Tap",
+        "Key": "N6",
+        "Requirements": [
+          "!Blood Tap",
+          "BloodRune <= 1"
+        ]
+      },
+      {
+        "Name": "Bone Shield",
+        "Key": "N4",
+        "Requirements": [
+          "!Bone Shield"
+        ]
+      },
+      {
+        "Name": "Empower Rune Weapon",
+        "Key": "N3",
+        "Requirements": [
+          "TotalRune == 0",
+          "RunicPower <= 105",
+          "InMeleeRange"
+        ]
+      },
+      {
+        "Name": "Death Strike",
+        "Key": "F5",
+        "Requirements": [
+          "Health% < 30"
+        ]
+      },
+      {
+        "Name": "Summon Gargoyle",
+        "Key": "4"
+      },
+      {
+        "Name": "Blood Boil",
+        "Key": "1",
+        "Requirements": [
+          "MobCount > 1",
+          "Frost Fever",
+          "Blood Plague",
+          "InMeleeRange"
+        ]
+      },
+      {
+        "Name": "Icy Touch",
+        "Key": "6",
+        "Requirements": [
+          "!Frost Fever",
+          "SpellInRange:0"
+        ]
+      },
+      {
+        "Name": "Blood Strike",
+        "Key": "3",
+        "Cooldown": 2000,
+        "Requirements": [
+          "MobCount < 2",
+          "TDebuff_Frost Fever > MIN_TIME_REFRESH && TDebuff_Blood Plague > MIN_TIME_REFRESH",
+          "InMeleeRange"
+        ]
+      },
+      {
+        "Name": "Scourge Strike",
+        "Key": "2",
+        "Cooldown": 2000,
+        "Requirements": [
+          "MobCount < 2",
+          "Frost Fever",
+          "Blood Plague",
+          "InMeleeRange"
+        ]
+      },
+      {
+        "Name": "Death Coil",
+        "Key": "8",
+        "Requirements": [
+          "RunicPower >= 60",
+          "SpellInRange:1"
+        ]
+      },
+      {
+        "Name": "Plague Strike",
+        "Key": "5",
+        "Requirements": [
+          "MobCount < 2",
+          "!Blood Plague",
+          "InMeleeRange"
+        ]
+      },
+      {
+        "Name": "Pestilenc",
+        "Key": "7",
+        "Requirements": [
+          "MobCount > 1",
+          "Frost Fever && Blood Plague && (TDebuff_Frost Fever < MIN_TIME_REFRESH || TDebuff_Blood Plague < MIN_TIME_REFRESH)",
+          "InMeleeRange"
+        ]
+      },
+      {
+        "Name": "AutoAttack"
+      },
+      {
+        "Name": "Approach",
+        "Log": false
+      }
+    ]
+  },
+  "Adhoc": {
+    "Sequence": [
+      {
+        "Cost": 3.1,
+        "Name": "Horn of Winter",
+        "Key": "F4",
+        "InCombat": "i dont care",
+        "Requirements": [
+          "!Horn of Winter || (CD <= GCD && TargetAlive && TargetHostile)",
+          "!Mounted"
+        ]
+      },
+      {
+        "Cost": 3.2,
+        "Name": "Raise Dead",
+        "Key": "F7",
+        "InCombat": "i dont care",
+        "Requirements": [
+          "!Has Pet",
+          "!Mounted",
+          "BagItem:ITEM_CORPSE_DUST"
+        ]
+      },
+      {
+        "Name": "Food",
+        "Key": "=",
+        "Requirement": "Health% < MIN_HP_FOOD%"
+      }
+    ]
+  },
+  "NPC": {
+    "Sequence": [
+      {
+        "Cost": 19,
+        "Name": "Repair",
+        "Key": "C",
+        "Requirement": "Durability% < 35",
+        "PathFilename": "_pack\\70-80\\Zul'Drak\\Argent_Stand_vendor.json"
+      },
+      {
+        "Cost": 19,
+        "Name": "Sell",
+        "Key": "C",
+        "Requirements": [
+          "BagFull",
+          "BagGreyItem"
+        ],
+        "PathFilename": "_pack\\70-80\\Zul'Drak\\Argent_Stand_vendor.json"
+      }
+    ]
+  }
+}

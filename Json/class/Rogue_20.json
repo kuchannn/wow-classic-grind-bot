@@ -1,0 +1,99 @@
+{
+  "ClassName": "Rogue",
+  "PathFilename": "10_Gnome.json",
+  "Pull": {
+    "Sequence": [
+      {
+        "Name": "Shoot",
+        "Key": "9",
+        "AfterCastDelay": 1000,
+        "AfterCastWaitMeleeRange": false
+      }
+    ]
+  },
+  "Combat": {
+    "Sequence": [
+      {
+        "Name": "Kick",
+        "Key": 6,
+        "WhenUsable": true,
+        "UseWhenTargetIsCasting": true
+        //"Requirement": "TargetCastingSpell:9053,11443"
+      },
+      {
+        "Name": "Evasion",
+        "Key": 5,
+        "WhenUsable": true,
+        "Requirement": "Health%<40"
+      },
+      {
+        "Name": "Slice and Dice",
+        "Key": "4",
+        "Requirements": [
+          "!Slice and Dice",
+          "Combo Point>0"
+        ]
+      },
+      {
+        "Name": "Eviscerate",
+        "Key": "3",
+        "Requirements": [
+          "TargetHealth%>20",
+          "Combo Point>1"
+        ]
+      },
+      {
+        "Name": "Sinister Strike",
+        "Key": "2"
+      },
+      {
+        "Name": "AutoAttack"
+      },
+      {
+        "Name": "Approach",
+        "Log": false
+      }
+    ]
+  },
+  "Adhoc": {
+    "Sequence": [
+      {
+        "Name": "potionhp",
+        "Key": "N4",
+        "Requirement": "Health%<5",
+        "Cooldown": 60000,
+        "InCombat": "true",
+        "Log": false,
+        "Cost": 3
+      },
+      {
+        "Name": "Food",
+        "Key": "N1",
+        "Requirement": "Health%<50"
+      },
+      {
+        "Name": "poisonmh",
+        "HasCastbar": true,
+        "Key": "N2",
+        "Requirement": "!HasMainHandEnchant",
+        "AfterCastAuraExpected": true
+      },
+      {
+        "Name": "poisonoh",
+        "HasCastbar": true,
+        "Key": "N3",
+        "Requirement": "!HasOffHandEnchant",
+        "AfterCastAuraExpected": true
+      },
+      {
+        "Name": "openstuff",
+        "Key": "N5",
+        "Cooldown": 30000,
+        "Requirements": [
+          "BagItem:20768:1"
+        ],
+        "Log": false
+      }
+    ]
+  }
+}

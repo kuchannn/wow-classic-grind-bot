@@ -1,0 +1,49 @@
+﻿@inject IBotController botController
+
+@implements IDisposable
+
+<Button Color="ButtonColor.Primary" @onclick="ToggleBot" disabled="@(Disable || DisableButton)">
+    @(botController.IsBotActive ? "Stop Bot" : "Start Bot")
+</Button>
+
+@code {
+    [Parameter]
+    public bool Disable { get; set; } = false;
+
+    private bool DisableButton { get; set; }
+
+    protected override void OnInitialized()
+    {
+        ValidateButton();
+
+        botController.ProfileLoaded += OnProfileLoaded;
+        botController.StatusChanged += OnStatusChanged;
+    }
+
+    public void Dispose()
+    {
+        botController.StatusChanged -= OnStatusChanged;
+        botController.ProfileLoaded -= OnProfileLoaded;
+    }
+
+    private void OnStatusChanged()
+    {
+        base.InvokeAsync(StateHasChanged);
+    }
+
+    private void ToggleBot()
+    {
+        botController.ToggleBotStatus();
+    }
+
+    private void OnProfileLoaded()
+    {
+        ValidateButton();
+        OnStatusChanged();
+    }
+
+    private void ValidateButton()
+    {
+        DisableButton = string.IsNullOrEmpty(botController.SelectedClassFilename);
+    }
+}

@@ -1,0 +1,128 @@
+﻿@inject IJSRuntime JSRuntime
+
+@inject BagReader bagReader
+
+@implements IDisposable
+
+@if (NewItems.Count() > 0)
+{
+    <Card>
+        <CardHeader>
+            <div class="d-flex">
+                <div class="p-2 flex-grow-1 bd-highlight">
+                    Bag Changes
+                </div>
+                <div class="p-2 bd-highlight">
+                    <Money Value="TotalMoneyChange" />
+                </div>
+            </div>
+        </CardHeader>
+        <CardBody>
+            @foreach (var bagItem in NewItems)
+            {
+                <div class="animate__animated animate__slideInDown">
+                    <ItemComponent Item="bagItem.Item"
+                                   Count="bagItem.Count"
+                                   LastCount="bagItem.LastCount"
+                                   LastChange="bagItem.LastChange"
+                                   LastUpdated="bagItem.LastUpdated"
+                                   ShowChangesPrice="true" />
+                    <hr style="margin:2px" />
+                </div>
+            }
+        </CardBody>
+    </Card>
+}
+@code {
+
+    private const int MaxItemToShow = 12;
+    private const int MaxLifeTimeSec = 15;
+
+    private Timer timer = null!;
+
+    private IEnumerable<BagItem> NewItems { get; set; } = null!;
+
+    private Currency TotalMoneyChange { get; set; } = Currency.Empty;
+
+    protected override void OnInitialized()
+    {
+        NewItems = bagReader.BagItems
+            .Where(WasRecentlyUpdated).Take(MaxItemToShow);
+
+        bagReader.DataChanged += OnBagReaderDataChanged;
+
+        timer = new Timer(TimerTick);
+    }
+
+    public void Dispose()
+    {
+        bagReader.DataChanged -= OnBagReaderDataChanged;
+        timer.Dispose();
+    }
+
+    private void TimerTick(object? sender)
+    {
+        base.InvokeAsync(StateHasChanged);
+
+        CalculateNextTimerTick();
+    }
+
+    protected int ItemValue(BagItem item)
+    {
+        if (item.LastChange == 0)
+        {
+            return item.Item.SellPrice * item.Count;
+        }
+        return item.LastChange * item.Item.SellPrice;
+    }
+
+    private bool WasRecentlyUpdated(BagItem item) =>
+        (DateTime.UtcNow - item.LastUpdated).TotalSeconds < MaxLifeTimeSec;
+
+    private DateTime ExpireTime(BagItem item) =>
+        item.LastUpdated.AddSeconds(MaxLifeTimeSec);
+
+    public void OnBagReaderDataChanged()
+    {
+        NewItems = bagReader.BagItems.Where(WasRecentlyUpdated);
+
+        if (NewItems.Count() > MaxItemToShow)
+        {
+            NewItems = NewItems.Take(MaxItemToShow);
+            int i = 0;
+            foreach (var item in NewItems)
+            {
+                item.LastUpdated -= TimeSpan.FromSeconds(i / 4);
+                i++;
+            }
+        }
+
+        CalculateNextTimerTick();
+
+        TotalMoneyChange = ItemPrice.ToSellPrice(NewItems.Sum(ItemValue));
+        base.InvokeAsync(StateHasChanged);
+    }
+
+    private void CalculateNextTimerTick()
+    {
+        DateTime nextCall = DateTime.MaxValue;
+
+        foreach (var item in NewItems)
+        {
+            DateTime expire = ExpireTime(item);
+            if (expire < nextCall)
+            {
+                nextCall = expire;
+            }
+        }
+
+        if (nextCall != DateTime.MaxValue)
+        {
+            TimeSpan delay = nextCall - DateTime.UtcNow;
+            if (delay < TimeSpan.Zero)
+                delay = TimeSpan.Zero;
+            
+            timer.Change(delay, Timeout.InfiniteTimeSpan);
+        }
+    }
+}

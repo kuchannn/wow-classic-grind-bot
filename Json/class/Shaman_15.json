@@ -1,0 +1,124 @@
+{
+  "ClassName": "Shaman",
+  "Loot": true,
+  "PathFilename": "_pack\\1-20\\Troll.Orc\\15-18_The Barrens_North.json",
+  "PathThereAndBack": true,
+  "PathReduceSteps": true,
+  "Blacklist": [
+    "Kolkar",
+    "Legashi"
+  ],
+  "NPCMaxLevels_Below": 5,
+  "NPCMaxLevels_Above": 1,
+  "Pull": {
+    "Sequence": [
+      {
+        "Name": "Lightning Bolt",
+        "Key": "2",
+        "HasCastBar": true
+      }
+    ]
+  },
+  "Combat": {
+    "Sequence": [
+      {
+        "Name": "Healing Wave",
+        "Key": "3",
+        "Requirement": "Health%<45",
+        "Cooldown": 5000,
+        "HasCastBar": true,
+        "Log": false
+      },
+      {
+        "Name": "Lightning Bolt",
+        "Key": "2",
+        "HasCastBar": true,
+        "Requirements": [
+          "!InMeleeRange",
+          "Mana%>30"
+        ]
+      },
+      {
+        "Name": "War Stomp",
+        "Key": "0",
+        "Requirements": [
+          "Race:Tauren",
+          "Health%<49",
+          "MobCount>1"
+        ],
+        "WhenUsable": true
+      },
+      {
+        "Name": "Fire shock",
+        "Key": "4",
+        "Requirements": [
+          "Mana%>40",
+          "InMeleeRange"
+        ],
+        "WhenUsable": true,
+        "Log": false
+      },
+      {
+        "Name": "Stoneskin Totem",
+        "Key": "7",
+        "Requirement": "MobCount>1",
+        "Cooldown": 30000,
+        "Log": false
+      },
+      {
+        "Name": "AutoAttack"
+      },
+      {
+        "Name": "Approach",
+        "Log": false
+      }
+    ]
+  },
+  "Adhoc": {
+    "Sequence": [
+      {
+        "Name": "Rockbiter Weapon",
+        "Key": "5",
+        "Requirement": "!HasMainHandEnchant",
+        "AfterCastAuraExpected": true
+      },
+      {
+        "Name": "Lightning Shield",
+        "Key": "6",
+        "Requirement": "!Lightning Shield"
+      }
+    ]
+  },
+  "Parallel": {
+    "Sequence": [
+      {
+        "Name": "Food",
+        "Key": "8",
+        "Requirement": "Health%<40"
+      },
+      {
+        "Name": "Drink",
+        "Key": "9",
+        "Requirement": "Mana%<40"
+      }
+    ]
+  },
+  "NPC": {
+    "Sequence": [
+      {
+        "Name": "Repair",
+        "Key": "R",
+        "Requirement": "Durability% < 35",
+        "PathFilename": "NPC_Cross.json",
+        "Cost": 6
+      },
+      {
+        "Name": "Sell",
+        "Key": "T",
+        "Requirement": "BagCount>46",
+        "PathFilename": "NPC_Cross.json",
+        "Cost": 6
+      }
+    ]
+  }
+}

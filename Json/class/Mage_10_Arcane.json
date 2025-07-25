@@ -1,0 +1,164 @@
+{
+  "ClassName": "Mage",
+  //"Mode": "AttendedGrind", //Grind
+  "Loot": true,
+  "PathFilename": "_pack\\1-20\\Dwarf.Gnome\\7-9_Dun Morogh_Tundred Hills (cl 9-11).json",
+  "PathThereAndBack": true,
+  "PathReduceSteps": false,
+  "IntVariables": {
+    "Item_Conjure_Drink": 2288,
+    "Item_Conjure_Food": 5349,
+    "MIN_FOOD%": 50,
+    "MIN_WATER%": 30,
+    "MIN_MANA_SPELL%": 60
+  },
+  "Pull": {
+    "Sequence": [
+      {
+        "Name": "Frostbolt",
+        "Key": "1",
+        "HasCastBar": true,
+        "Requirements": [
+          "SpellInRange:3",
+          "Mana% > MIN_MANA_SPELL%"
+        ]
+      },
+      {
+        "Name": "Shoot",
+        "Key": "0",
+        "Item": true,
+        "Requirements": [
+          "HasRangedWeapon",
+          "!Shooting",
+          "SpellInRange:1",
+          "Mana% < MIN_MANA_SPELL%"
+        ]
+      },
+      {
+        "Name": "Approach",
+        "Requirements": [
+          "!Casting",
+          "!Shooting"
+        ]
+      }
+    ]
+  },
+  "Combat": {
+    "Sequence": [
+      {
+        "Name": "Fire Blast",
+        "Key": "5",
+        "WhenUsable": true,
+        "Requirements": [
+          "TargetHealth% < 45",
+          "SpellInRange:4"
+        ]
+      },
+      {
+        "Name": "Frost Nova",
+        "Key": "6",
+        "WhenUsable": true,
+        "Requirement": "InMeleeRange",
+        "AfterCastStepBack": 1000
+      },
+      {
+        "Name": "Arcane Missiles",
+        "Key": "7",
+        "HasCastBar": true,
+        "Requirements": [
+          "Mana% > MIN_MANA_SPELL%",
+          "TargetHealth% > 35"
+        ]
+      },
+      {
+        "Name": "Shoot",
+        "Key": "0",
+        "Item": true,
+        "Requirements": [
+          "HasRangedWeapon",
+          "!Shooting",
+          "SpellInRange:1",
+          "Mana% < MIN_MANA_SPELL%"
+        ]
+      },
+      {
+        "Name": "AutoAttack",
+        "Requirements": [
+          "!HasRangedWeapon"
+        ]
+      },
+      {
+        "Name": "Approach",
+        "Requirements": [
+          "!Casting",
+          "!Shooting"
+        ]
+      }
+    ]
+  },
+  "Parallel": {
+    "Sequence": [
+      {
+        "Name": "Food",
+        "Key": "=",
+        "Requirement": "Health% < MIN_FOOD%"
+      },
+      {
+        "Name": "Drink",
+        "Key": "-",
+        "Requirement": "Mana% < MIN_WATER%"
+      }
+    ]
+  },
+  "Adhoc": {
+    "Sequence": [
+      {
+        "Name": "Frost Armor",
+        "Key": "3",
+        "Requirement": "!Frost Armor"
+      },
+      {
+        "Name": "Arcane Intellect",
+        "Key": "4",
+        "Requirement": "!Arcane Intellect"
+      },
+      {
+        "Name": "Conjure Drink",
+        "Key": "9",
+        "HasCastBar": true,
+        "Requirement": "!BagItem:Item_Conjure_Drink:4",
+        "AfterCastWaitCastbar": true,
+        "AfterCastWaitBag": true
+      },
+      {
+        "Name": "Conjure Food",
+        "Key": "8",
+        "HasCastBar": true,
+        "Requirement": "!BagItem:Item_Conjure_Food:4",
+        "AfterCastWaitCastbar": true,
+        "AfterCastWaitBag": true
+      }
+    ]
+  },
+  "NPC": {
+    "Sequence": [
+      {
+        "Cost": 6,
+        "Name": "Repair",
+        "Key": "C",
+        "Requirement": "Durability% < 35",
+        "PathFilename": "5_Gnome_Vendor.json"
+      },
+      {
+        "Cost": 6,
+        "Name": "Sell",
+        "Key": "C",
+        "Requirements": [
+          "BagFull",
+          "BagGreyItem"
+        ],
+        "PathFilename": "5_Gnome_Vendor.json"
+      }
+    ]
+  }
+}

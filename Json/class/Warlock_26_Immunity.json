@@ -1,0 +1,231 @@
+{
+  "ClassName": "Warlock",
+  "Loot": true,
+  "NPCMaxLevels_Above": 2,
+  "PathFilename": "24-30 Duskwood wolf ravager.json",
+  "PathThereAndBack": false,
+  "PathReduceSteps": true,
+  "NpcSchoolImmunity": {
+    "1043": "Shadow",
+    "18468": "Fire, Shadow, Arcane"
+  },
+  "IntVariables": {
+    "Item_Soul_Shard": 6265,
+    "Item_Healthstone": 19007,
+    "DOT_MIN_HEALTH%": 35,
+    "DRAIN_MIN_HP%": 70,
+    "TAP_MIN_MANA%": 65,
+    "MIN_FOOD_DRINK%": 30
+  },
+  "Pull": {
+    "Sequence": [
+      {
+        "Name": "Immolate",
+        "Key": "5",
+        "HasCastBar": true,
+        "Requirements": [
+          "!Has Pet"
+        ],
+        "School": "Fire"
+      },
+      {
+        "Name": "Approach",
+        "Requirements": [
+          "Has Pet",
+          "MinRange > 15"
+        ]
+      }
+    ]
+  },
+  "Combat": {
+    "Sequence": [
+      {
+        "Name": "heal",
+        "Key": "N3",
+        "Requirements": [
+          "Health% < 35",
+          "BagItem:Item_Healthstone"
+        ],
+        "Cooldown": 120000,
+        "InCombat": "true"
+      },
+      {
+        "Name": "Shadow Bolt",
+        "Key": "2",
+        "Requirements": [
+          "Talent:Nightfall",
+          "Shadow Trance"
+        ],
+        "School": "Shadow"
+      },
+      {
+        "Name": "Drain Soul",
+        "Key": "9",
+        "HasCastBar": true,
+        "Requirements": [
+          "TargetHealth% < 25",
+          "!BagItem:Item_Soul_Shard:3",
+          "TargetYieldXP"
+        ],
+        "School": "Shadow"
+      },
+      {
+        "Name": "Immolate",
+        "Key": "5",
+        "HasCastBar": true,
+        "Requirements": [
+          "TargetHealth% > DOT_MIN_HEALTH%",
+          "!Immolate",
+          "!TargetsMe"
+        ],
+        "School": "Fire"
+      },
+      {
+        "Name": "Curse of Agony",
+        "Key": "1",
+        "BeforeCastStop": true,
+        "Requirements": [
+          "TargetHealth% > DOT_MIN_HEALTH%",
+          "!Curse of Agony"
+        ],
+        "School": "Shadow"
+      },
+      {
+        "Name": "Corruption",
+        "Key": "7",
+        "BeforeCastStop": true,
+        "Requirements": [
+          "TargetHealth% > DOT_MIN_HEALTH%",
+          "!Corruption",
+          "Talent:Improved Corruption:5"
+        ],
+        "School": "Shadow"
+      },
+      {
+        "Name": "Health Funnel",
+        "Key": "N6",
+        "HasCastBar": true,
+        "Requirements": [
+          "Has Pet",
+          "Health% > MIN_FOOD_DRINK%",
+          "PetHealth% <= DOT_MIN_HEALTH%"
+        ]
+      },
+      {
+        "Name": "Shadow Bolt",
+        "Key": "2",
+        "HasCastBar": true,
+        "Requirements": [
+          "!TargetsMe",
+          "Health% > DRAIN_MIN_HP%",
+          "TargetHealth% > 40"
+        ],
+        "School": "Shadow",
+        "Cooldown": 4000
+      },
+      {
+        "Name": "Drain Life",
+        "Key": "N4",
+        "HasCastBar": true,
+        "Requirements": [
+          "Health% < DRAIN_MIN_HP%"
+        ],
+        "School": "Shadow"
+      },
+      {
+        "Name": "Shoot",
+        "Key": "0",
+        "Item": true,
+        "Requirements": [
+          "HasRangedWeapon",
+          "!Shooting",
+          "SpellInRange:1"
+        ]
+      },
+      {
+        "Name": "AutoAttack",
+        "Requirements": [
+          "!HasRangedWeapon"
+        ]
+      }
+    ]
+  },
+  "Parallel": {
+    "Sequence": [
+      {
+        "Name": "Food",
+        "Key": "=",
+        "Requirement": "Health% < MIN_FOOD_DRINK%"
+      },
+      {
+        "Name": "Drink",
+        "Key": "-",
+        "Requirement": "Mana% < MIN_FOOD_DRINK%"
+      }
+    ]
+  },
+  "Adhoc": {
+    "Sequence": [
+      {
+        "Name": "Demon Armor",
+        "Key": "3",
+        "Requirement": "!Demon Armor"
+      },
+      {
+        "Name": "Summon Voidwalker",
+        "HasCastBar": true,
+        "Key": "4",
+        "Requirements": [
+          "BagItem:Item_Soul_Shard",
+          "!Has Pet"
+        ],
+        "AfterCastWaitCastbar": true,
+        "AfterCastAuraExpected": true
+      },
+      {
+        "Name": "Life Tap",
+        "Cost": 3,
+        "Key": "8",
+        "InCombat": "i dont care",
+        "Charge": 2,
+        "Requirements": [
+          "!Casting",
+          "Health% > TAP_MIN_MANA%",
+          "Mana% < TAP_MIN_MANA%"
+        ]
+      },
+      {
+        "Name": "heal",
+        "Key": "N3",
+        "HasCastBar": true,
+        "Requirements": [
+          "BagItem:Item_Soul_Shard",
+          "!BagItem:Item_Healthstone"
+        ],
+        "AfterCastWaitCastbar": true,
+        "AfterCastWaitBag": true
+      }
+    ]
+  },
+  "NPC": {
+    "Sequence": [
+      {
+        "Name": "Repair",
+        "Key": "C",
+        "Requirement": "Durability% < 35",
+        "PathFilename": "23_Duskwood_Vendor.json",
+        "Cost": 6
+      },
+      {
+        "Name": "Sell",
+        "Key": "C",
+        "Requirements": [
+          "BagFull",
+          "BagGreyItem"
+        ],
+        "PathFilename": "23_Duskwood_Vendor.json",
+        "Cost": 6
+      }
+    ]
+  }
+}

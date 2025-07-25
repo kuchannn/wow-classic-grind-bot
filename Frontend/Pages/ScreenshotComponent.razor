@@ -1,0 +1,46 @@
+﻿@inject IWowScreen screen
+@inject IScreenImageProvider provider
+
+@using SixLabors.ImageSharp
+@using SixLabors.ImageSharp.PixelFormats
+@using SixLabors.ImageSharp.Formats.Jpeg
+
+<div class="card" @onclick="Toggle">
+    @if (screen.EnablePostProcess)
+    {
+        <img class="@(Stretch ? "img-filled" : "img-filled-half")" src="@provider.ScreenImage.ToBase64String(JpegFormat.Instance)" alt="Toggle preview!" />
+    }
+    else
+    {
+        <label class="oi oi-fullscreen-enter">  Toggle preview!</label>
+    }
+</div>
+
+@code {
+
+    [Parameter]
+    public bool Stretch { get; set; } = false;
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            screen.OnChanged += this.ImageChanged;
+        }
+    }
+
+    public void Dispose()
+    {
+        screen.OnChanged -= this.ImageChanged;
+    }
+
+    protected void Toggle()
+    {
+        screen.EnablePostProcess = !screen.EnablePostProcess;
+    }
+
+    private async void ImageChanged()
+    {
+        await base.InvokeAsync(StateHasChanged);
+    }
+}

@@ -1,0 +1,79 @@
+{
+  "ClassName": "Shaman",
+  "Loot": true,
+  "PathFilename": "_pack\\1-20\\Draenei\\1-5_Azuremyst Isle.json",
+  "PathThereAndBack": true,
+  "PathReduceSteps": true,
+  "Wait": {
+    "Sequence": [
+      {
+        "Cost": 0.9,
+        "Name": "User",
+        "Requirement": "MenuOpen || ChatInputVisible"
+      }
+    ]
+  },
+  "Pull": {
+    "Sequence": [
+      {
+        "Name": "Lightning Bolt",
+        "Key": "2",
+        "HasCastBar": true
+      }
+    ]
+  },
+  "Combat": {
+    "Sequence": [
+      {
+        "Name": "Gift of the Naaru",
+        "Key": "4",
+        "HasCastBar": true,
+        "WhenUsable": true,
+        "Requirements": [
+          "Race:Draenei",
+          "Health%<50"
+        ]
+      },
+      {
+        "Name": "Healing Wave",
+        "Key": "3",
+        "Requirement": "Health%<40",
+        "Cooldown": 10000,
+        "HasCastBar": true
+      },
+      {
+        "Name": "Lightning Bolt",
+        "Key": "2",
+        "HasCastBar": true,
+        "Requirement": "!InMeleeRange"
+      },
+      {
+        "Name": "AutoAttack",
+        "Requirements": [
+          "!Casting"
+        ]
+      },
+      {
+        "Name": "Approach",
+        "Requirements": [
+          "!Casting",
+          "AutoAttacking"
+        ]
+      }
+    ]
+  },
+  "Parallel": {
+    "Sequence": [
+      {
+        "Name": "Food",
+        "Key": "=",
+        "Requirement": "Health%<30"
+      },
+      {
+        "Name": "Drink",
+        "Key": "-",
+        "Requirement": "Mana%<30"
+      }
+    ]
+  }
+}

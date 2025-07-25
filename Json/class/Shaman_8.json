@@ -1,0 +1,149 @@
+{
+  "ClassName": "Shaman",
+  "Loot": true,
+  "PathFilename": "_pack\\1-20\\Draenei\\5-9_Azuremyst Isle.json",
+  "KillIfGivesExp": true,
+  "IntVariables": {
+    "Item_Earth_Totem": 5175
+  },
+  "Pull": {
+    "Sequence": [
+      {
+        "Name": "Lightning Bolt",
+        "Key": "2",
+        "HasCastBar": true,
+        "Requirements": [
+          "!InMeleeRange",
+          "SpellInRange:0",
+          "Stoneskin",
+          "Mana%>60"
+        ],
+        "AfterCastWaitMeleeRange": true
+      },
+      {
+        "Name": "Lightning Bolt",
+        "Key": "2",
+        "HasCastBar": true,
+        "Requirements": [
+          "!InMeleeRange",
+          "SpellInRange:0",
+          "!Stoneskin",
+          "Mana%>70"
+        ]
+      }
+    ]
+  },
+  "Combat": {
+    "Sequence": [
+      {
+        "Name": "Gift of the Naaru",
+        "Key": "4",
+        "HasCastBar": true,
+        "WhenUsable": true,
+        "Requirements": [
+          "Race:Draenei",
+          "Health%<50"
+        ]
+      },
+      {
+        "Name": "Healing Wave",
+        "Key": "3",
+        "HasCastBar": true,
+        "WhenUsable": true,
+        "Requirement": "Health%<40",
+        "Cooldown": 5000
+      },
+      {
+        "Name": "Earth Shock",
+        "Key": "6",
+        "WhenUsable": true,
+        "Requirements": [
+          "TargetHealth%>10",
+          "SpellInRange:1",
+          "Mana%>55",
+          "TargetHealth%>20"
+        ]
+      },
+      {
+        "Name": "Stoneskin Totem",
+        "Key": "F2",
+        "WhenUsable": true,
+        "Cooldown": 30000,
+        "Requirements": [
+          "InMeleeRange",
+          "TargetHealth%>50",
+          "Mana%>55",
+          "BagItem:Item_Earth_Totem",
+          "!Stoneskin"
+        ]
+      },
+      {
+        "Name": "AutoAttack",
+        "Requirements": [
+          "!Casting"
+        ]
+      },
+      {
+        "Name": "Approach",
+        "Requirements": [
+          "!Casting",
+          "AutoAttacking"
+        ]
+      }
+    ]
+  },
+  "Adhoc": {
+    "Sequence": [
+      {
+        "Name": "Rockbiter Weapon",
+        "Key": "5",
+        "Requirement": "!HasMainHandEnchant",
+        "AfterCastAuraExpected": true
+      },
+      {
+        "Name": "Lightning Shield",
+        "Key": "7",
+        "Cooldown": 10000,
+        "Requirements": [
+          "!Lightning Shield",
+          "Mana%>50"
+        ]
+      }
+    ]
+  },
+  "Parallel": {
+    "Sequence": [
+      {
+        "Name": "Food",
+        "Key": "=",
+        "Requirement": "Health%<30"
+      },
+      {
+        "Name": "Drink",
+        "Key": "-",
+        "Requirement": "Mana%<30"
+      }
+    ]
+  },
+  "NPC": {
+    "Sequence": [
+      {
+        "Name": "Repair",
+        "Key": "C",
+        "Requirement": "Durability% < 35",
+        "PathFilename": "5_Draenai_Vendor.json",
+        "Cost": 6
+      },
+      {
+        "Name": "Sell",
+        "Key": "C",
+        "Requirements": [
+          "BagFull",
+          "BagGreyItem"
+        ],
+        "PathFilename": "5_Draenai_Vendor.json",
+        "Cost": 6
+      }
+    ]
+  }
+}

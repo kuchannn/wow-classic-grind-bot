@@ -1,0 +1,227 @@
+{
+  "ClassName": "Hunter",
+  "Wait": {
+    "Sequence": [
+      {
+        "Cost": 0.9,
+        "Name": "User",
+        "Requirement": "MenuOpen || ChatInputVisible"
+      }
+    ]
+  },
+  "Paths": [
+    {
+      "PathFilename": "_pack\\1-20\\Troll.Orc\\01-04_Durotar_Valley of Trials.json",
+      "PathThereAndBack": false,
+      "PathReduceSteps": false,
+      "Requirements": [
+        "Level < 6"
+      ]
+    },
+    {
+      "PathFilename": "_pack\\1-20\\Troll.Orc\\05-07_Durotar_Road.json",
+      "PathThereAndBack": true,
+      "PathReduceSteps": false,
+      "Requirements": [
+        "Level < 8"
+      ]
+    },
+    {
+      "PathFilename": "_pack\\1-20\\Troll.Orc\\05-08_Durotar_big.json",
+      "PathThereAndBack": false,
+      "PathReduceSteps": false,
+      "Requirements": [
+        "Level < 9"
+      ]
+    },
+    {
+      "PathFilename": "_pack\\1-20\\Troll.Orc\\06-08_Durotar_Razorhill.json",
+      "PathThereAndBack": false,
+      "PathReduceSteps": false,
+      "Requirements": [
+        "Level < 10"
+      ]
+    },
+    
+    {
+      "PathFilename": "_pack\\1-20\\Troll.Orc\\07-09_Durotar_Razorwind.json",
+      "PathThereAndBack": false,
+      "PathReduceSteps": false,
+      "Requirements": [
+       "Level < 12"
+      ]
+    },
+
+    {
+      "PathFilename": "_pack\\1-20\\Troll.Orc\\08-09_Durotar_Razormane Q-Encroachment (cl 11-12).json",
+      "PathThereAndBack": true,
+      "PathReduceSteps": false,
+      "Requirements": [
+        "Level < 13"
+      ]
+    },
+    {
+      "PathFilename": "_pack\\1-20\\Troll.Orc\\09-12_Durotar_SouthFury River.json",
+      "PathThereAndBack": false,
+      "PathReduceSteps": false,
+      "Requirements": [
+        "Level < 14"
+      ]
+    }
+  ],
+  "Pull": {
+    "Sequence": [
+      {
+        "Name": "Auto Shot",
+        "Key": "3",
+        "BeforeCastStop": true,
+        "AfterCastWaitCombat": true,
+        "Item": true,
+        "Requirements": [
+          "!InMeleeRange",
+          "!AutoShot"
+        ]
+      }
+    ]
+  },
+  "Combat": {
+    "Sequence": [
+      {
+        "Name": "Auto Shot",
+        "Key": "3",
+        "Item": true,
+        "BeforeCastStop": true,
+        "Requirements": [
+          "!InMeleeRange",
+          "!AutoShot"
+        ]
+      },
+      {
+        "Name": "Stepback",
+        "Key": "S",
+        "PressDuration": 3000,
+        "BaseAction": true,
+        "Requirements": [
+          "TargetsMe",
+          "LastAutoShotMs < 400",
+          "!InMeleeRange",
+          "AutoShot"
+        ],
+        "Interrupt": "RangedSwing < -500 && TargetAlive"
+      },
+      {
+        "Name": "Raptor Strike",
+        "Key": "4",
+        "WhenUsable": true,
+        "AfterCastWaitSwing": true,
+        "Requirements": [
+          "MainHandSwing > -400",
+          "InMeleeRange",
+          "!AutoShot"
+        ]
+      },
+      {
+        "Name": "AutoAttack",
+        "Requirements": [
+          "InMeleeRange"
+        ]
+      },
+      {
+        "Name": "Approach",
+        "Log": false,
+        "Requirements": [
+          "InMeleeRange"
+        ]
+      }
+    ]
+  },
+  "Parallel": {
+    "Sequence": [
+      {
+        "Name": "Food",
+        "Key": "6",
+        "Requirements": [
+          "Health% < 40"
+        ]
+      },
+      {
+        "Name": "Drink",
+        "Key": "7",
+        "Requirements": [
+          "Mana% < 40"
+        ]
+      }
+    ]
+  },
+  "NPC": {
+    "Sequence": [
+      {
+        "Cost": 6,
+        "Name": "Repair",
+        "Key": "C",
+        "Requirement": "Durability% < 35",
+        "PathFilename": "1_Valley_Trials_Repair.json",
+        "Requirements": [
+          "UIMapId == 14",
+          "Level < 6"
+        ]
+      },
+      {
+        "Cost": 6,
+        "Name": "Repair",
+        "Key": "C",
+        "Requirement": "Durability% < 35",
+        "PathFilename": "1_Orc_Repair.json",
+        "Requirements": [
+          "UIMapId == 14",
+          "Level >= 6"
+        ]
+      },
+      {
+        "Cost": 6,
+        "Name": "Repair",
+        "Key": "C",
+        "Requirement": "Durability% < 35",
+        "PathFilename": "10_Crossroads_Repair.json",
+        "Requirements": [
+          "UIMapId == 17"
+        ]
+      },
+      {
+        "Cost": 6,
+        "Name": "Sell",
+        "Key": "C",
+        "Requirements": [
+          "BagFull",
+          "BagGreyItem",
+          "UIMapId == 14",
+          "Level < 6"
+        ],
+        "PathFilename": "1_Valley_Trials_Vendor.json"
+      },
+      {
+        "Cost": 6,
+        "Name": "Sell",
+        "Key": "C",
+        "Requirements": [
+          "BagFull",
+          "BagGreyItem",
+          "UIMapId == 14",
+          "Level >= 6"
+        ],
+        "PathFilename": "1_Orc_Vendor.json"
+      },
+      {
+        "Cost": 6,
+        "Name": "Sell",
+        "Key": "C",
+        "Requirements": [
+          "BagFull",
+          "BagGreyItem",
+          "UIMapId == 17"
+        ],
+        "PathFilename": "10_Crossroads_Vendor.json"
+      }
+    ]
+  }
+} 

@@ -1,0 +1,95 @@
+{
+  "ClassName": "Rogue",
+  "Skin": true,
+  "PathFilename": "10_Gnome.json",
+  "Pull": {
+    "Sequence": [
+      {
+        "Name": "Stealth",
+        "Key": "N2",
+        "WhenUsable": true,
+        "AfterCastWaitBuff": true,
+        "Requirements": [
+          "!Stealth",
+          "!InMeleeRange"
+        ]
+      },
+      {
+        "Name": "Backstab",
+        "Key": "1",
+        "WhenUsable": true,
+        "Requirement": "Stealth&&InMeleeRange"
+      }
+    ]
+  },
+  "Combat": {
+    "Sequence": [
+      {
+        "Name": "Evasion",
+        "Key": 5,
+        "WhenUsable": true,
+        "Requirement": "Health%<40"
+      },
+      {
+        "Name": "Slice and Dice",
+        "Key": "4",
+        "AfterCastAuraExpected": true,
+        "Requirements": [
+          "!Slice and Dice",
+          "Combo Point > 1"
+        ]
+      },
+      {
+        "Name": "Eviscerate",
+        "Key": "3",
+        "Requirements": [
+          "TargetHealth%>20",
+          "LastMainHandMs<500",
+          "Combo Point > 1"
+        ]
+      },
+      {
+        "Name": "Sinister Strike",
+        "Key": "2",
+        "Requirement": "LastMainHandMs<500"
+      },
+      {
+        "Name": "AutoAttack"
+      },
+      {
+        "Name": "Approach",
+        "Log": false
+      }
+    ]
+  },
+  "Adhoc": {
+    "Sequence": [
+      {
+        "Name": "Food",
+        "Key": "N1",
+        "Requirement": "Health%<30"
+      }
+    ]
+  },
+  "NPC": {
+    "Sequence": [
+      {
+        "Name": "Repair",
+        "Key": "C",
+        "Requirement": "Durability% < 35",
+        "PathFilename": "5_Gnome_Vendor.json",
+        "Cost": 6
+      },
+      {
+        "Name": "Sell",
+        "Key": "C",
+        "Requirements": [
+          "BagFull",
+          "BagGreyItem"
+        ],
+        "PathFilename": "5_Gnome_Vendor.json",
+        "Cost": 6
+      }
+    ]
+  }
+}

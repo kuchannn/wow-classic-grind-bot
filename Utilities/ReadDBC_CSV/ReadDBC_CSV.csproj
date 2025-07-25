@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" />
+    <PackageReference Include="Sep" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="SharedLib">
+      <HintPath>..\..\SharedLib\bin\Release\net9.0\SharedLib.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>

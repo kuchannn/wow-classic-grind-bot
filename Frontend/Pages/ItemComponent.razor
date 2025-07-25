@@ -1,0 +1,102 @@
+﻿@inject WApi api
+
+<a href="@($"{api.ItemId}{Item.Entry}")" target="_blank" data-wowhead="item=@Item.Entry" class="small" style="text-decoration:none">
+    <b>
+        <span style="font-weight:normal" class="@(colors[Item.Quality])">
+            @if (Count > 1)
+            {
+                @Count
+
+                <span>&nbsp;</span>
+            }
+
+            @if (iconName != string.Empty)
+            {
+                <img src="@imgLink" />
+            }
+            @Item.Name
+            @if (ShowPrice && Item.SellPrice > 0)
+            {
+                <Money Value="GetItemPrice()" />
+            }
+            @if (WasRecentlyUpdated())
+            {
+                <Badge Color="BadgeColor.Info" class="float-end">@ChangeDescription()</Badge>
+            }
+        </span>
+    </b>
+</a>
+
+@code {
+    private const int MaxLifeTime = 30;
+
+    [Parameter]
+    public Item Item { get; set; }
+
+    [Parameter]
+    public bool ShowChangesPrice { get; set; } = false;
+
+    [Parameter]
+    public bool ShowPrice { get; set; } = false;
+
+    [Parameter]
+    public bool ShowIcon { get; set; } = true;
+
+    [Parameter]
+    public int Count { get; set; } = 1;
+
+    [Parameter]
+    public int LastCount { get; set; } = 1;
+
+    [Parameter]
+    public int LastChange { get; set; } = 0;
+
+    [Parameter]
+    public DateTime LastUpdated { get; set; } = DateTime.MinValue;
+
+    private string iconName { get; set; } = string.Empty;
+    private string imgLink => string.Format(WApi.TinyIconUrl, iconName);
+
+    private static readonly string[] colors = { "poor", "common", "uncommon", "rare", "epic", "legendary", "artifact", "heirloom" };
+
+    private static readonly Dictionary<int, string> icons = new()
+    {
+        { -1, "inv_misc_bag_08" } // Backpack
+    };
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (!ShowIcon || Item.Entry == 0) return;
+
+        if (icons.TryGetValue(Item.Entry, out var icon))
+        {
+            iconName = icon;
+            return;
+        }
+
+        iconName = await api.RequestItemIconName(Item.Entry);
+        icons.TryAdd(Item.Entry, iconName);
+    }
+
+    private Currency GetItemPrice()
+    {
+        int value = Count * Item.SellPrice;
+        if (ShowChangesPrice)
+        {
+            value = (LastChange == 0 ? Count : LastChange) * Item.SellPrice;
+        }
+
+        return ItemPrice.ToSellPrice(value);
+    }
+
+    private bool WasRecentlyUpdated() => (DateTime.UtcNow - LastUpdated).TotalSeconds < MaxLifeTime;
+
+    private string ChangeDescription()
+    {
+        if (Count == LastCount)
+            return "New";
+
+        int change = Count - LastCount;
+        return change.ToString("+#;-#");
+    }
+}

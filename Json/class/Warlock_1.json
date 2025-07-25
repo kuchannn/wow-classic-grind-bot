@@ -1,0 +1,87 @@
+{
+  "ClassName": "Warlock",
+  "Loot": true,
+  "PathFilename": "1_Gnome.json",
+  "PathThereAndBack": true,
+  "PathReduceSteps": false,
+  "Wait": {
+    "Sequence": [
+      {
+        "Cost": 0.9,
+        "Name": "User",
+        "Requirement": "MenuOpen || ChatInputVisible"
+      }
+    ]
+  },
+  "Pull": {
+    "Sequence": [
+      {
+        "Name": "Shadow Bolt",
+        "Key": "2",
+        "HasCastBar": true
+      }
+    ]
+  },
+  "Combat": {
+    "Sequence": [
+      {
+        "Name": "Shadow Bolt",
+        "HasCastBar": true,
+        "Key": "2"
+      },
+      {
+        "Name": "AutoAttack",
+        "Requirements": [
+          "!Casting"
+        ]
+      },
+      {
+        "Name": "Approach",
+        "Requirements": [
+          "!Casting",
+          "AutoAttacking"
+        ]
+      }
+    ]
+  },
+  "Adhoc": {
+    "Sequence": [
+      {
+        "Name": "Demon Skin",
+        "Key": "3",
+        "Requirement": "!Demon Skin"
+      },
+      {
+        "Name": "Food",
+        "Key": "=",
+        "Requirement": "Health% < 50"
+      },
+      {
+        "Name": "Drink",
+        "Key": "-",
+        "Requirement": "Mana% < 50"
+      }
+    ]
+  },
+  "NPC": {
+    "Sequence": [
+      {
+        "Name": "Repair",
+        "Key": "C",
+        "Requirement": "Durability% < 35",
+        "PathFilename": "1_Gnome_Vendor.json",
+        "Cost": 6
+      },
+      {
+        "Name": "Sell",
+        "Key": "C",
+        "Requirements": [
+          "BagFull",
+          "BagGreyItem"
+        ],
+        "PathFilename": "1_Gnome_Vendor.json",
+        "Cost": 6
+      }
+    ]
+  }
+}

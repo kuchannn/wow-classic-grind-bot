@@ -1,0 +1,131 @@
+﻿@implements IDisposable
+
+@inject IBotController botController
+@inject IMinimapImageProvider provider
+@inject IWowScreen screen
+
+@inject MinimapNodeFinder minimapNodeFinder
+
+@using SixLabors.ImageSharp
+@using SixLabors.ImageSharp.PixelFormats
+@using SixLabors.ImageSharp.Formats.Jpeg
+
+<div class="card">
+    <div class="card-header">
+        <table width="100%">
+            <tr>
+                <td>
+                    Minimap
+                    <span style="float: right">
+                        <button class="btn btn-sm @(previewEnabled ? "btn-danger" : "btn-primary")" @onclick="TogglePreview">Preview</button>
+                        <ToggleButton />
+                    </span>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div class="card-body" style="padding: 0 0 0 0; width:@(Size)px; height:@(Size)px">
+        @if (previewEnabled)
+        {
+            if (DateTime.UtcNow > lastUpdate.AddMilliseconds(UpdateIntervalMs))
+            {
+                image = provider.MiniMapImage.ToBase64String(JpegFormat.Instance);
+                if (image != "")
+                    lastUpdate = DateTime.UtcNow;
+            }
+
+            <img style="width:@(Size)px; height:@(Size)px" src="@image" alt="Red dot" />
+
+        }
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public int Size { get; set; } = 400;
+
+    [Parameter]
+    public float DownScale { get; set; } = 0.5f;
+
+    [Parameter]
+    public EventCallback<int> OnNodeFound { get; set; }
+
+    private string image = "";
+
+    private bool lastNodeFound = false;
+    private int lastNodeCount = 0;
+
+    private bool preview = false;
+    private bool previewEnabled
+    {
+        get => preview;
+        set
+        {
+            preview = value;
+        }
+    }
+
+    private const int UpdateIntervalMs = 500;
+    private DateTime lastUpdate;
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            screen.OnChanged += this.ImageChanged;
+        }
+    }
+
+    protected override void OnInitialized()
+    {
+        if (OnNodeFound.HasDelegate)
+        {
+            minimapNodeFinder.NodeEvent += NodeFound;
+        }
+    }
+
+    public void Dispose()
+    {
+        screen.OnChanged -= this.ImageChanged;
+
+
+        if (OnNodeFound.HasDelegate)
+        {
+            minimapNodeFinder.NodeEvent -= NodeFound;
+        }
+    }
+
+    private async void ImageChanged()
+    {
+        if (previewEnabled)
+        {
+            await base.InvokeAsync(StateHasChanged);
+        }
+    }
+
+    private void NodeFound(object? source, MinimapNodeEventArgs e)
+    {
+        if (!botController.IsBotActive) return;
+
+        bool nodeFound = e.X > 0 && e.Y > 0;
+        if (lastNodeFound != nodeFound || e.Amount != lastNodeCount)
+        {
+            base.InvokeAsync(() =>
+            {
+                OnNodeFound.InvokeAsync(e.Amount);
+            });
+            lastNodeCount = e.Amount;
+        }
+        lastNodeFound = nodeFound;
+
+        if (previewEnabled)
+        {
+            base.InvokeAsync(StateHasChanged);
+        }
+    }
+
+    private void TogglePreview()
+    {
+        previewEnabled = !previewEnabled;
+    }
+}

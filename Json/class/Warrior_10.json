@@ -1,0 +1,121 @@
+{
+  "ClassName": "Warrior",
+  "PathFilename": "_pack\\1-20\\Dwarf.Gnome\\7-9_Dun Morogh_Tundred Hills (cl 9-11).json",
+  "Pull": {
+    "Sequence": [
+      {
+        "Name": "Bloodrage",
+        "Key": "8",
+        "WhenUsable": true,
+        "Requirement": "Health% > 50"
+      },
+      {
+        "Name": "Throw",
+        "Key": "9",
+        "Item": true,
+        "WhenUsable": true,
+        "BeforeCastStop": true,
+        "AfterCastWaitMeleeRange": true,
+        "Requirements": [
+          "AddVisible",
+          "HasRangedWeapon && !Items Broken",
+          "!InMeleeRange && (SpellInRange:2 || SpellInRange:3)"
+        ]
+      },
+      {
+        "Name": "Charge",
+        "Key": "3",
+        "WhenUsable": true,
+        "Requirement": "SpellInRange:0",
+        "AfterCastWaitMeleeRange": true
+      }
+    ]
+  },
+  "Combat": {
+    "Sequence": [
+      {
+        "Name": "StopAttack",
+        "BeforeCastDelay": 25,
+        "Requirements": [
+          "Battle Shout",
+          "AutoAttacking",
+          "TargetHealth% > 98",
+          "Rage >= Cost_Heroic Strike"
+        ],
+        "AfterCastDelay": 25
+      },
+      {
+        "Name": "Thunder Clap",
+        "Key": "6",
+        "WhenUsable": true,
+        "Requirements": [
+          "!Thunder Clap && MobCount > 1"
+        ]
+      },
+      {
+        "Name": "Heroic Strike",
+        "Key": "2",
+        "WhenUsable": true,
+        "Requirements": [
+          "MainHandSwing > -400"
+        ],
+        "AfterCastWaitSwing": true
+      },
+      {
+        "Name": "Rend",
+        "Key": "5",
+        "WhenUsable": true,
+        "Requirements": [
+          "TargetHealth% > 80",
+          "!Rend"
+        ]
+      },
+      {
+        "Name": "AutoAttack"
+      },
+      {
+        "Name": "Approach",
+        "Log": false
+      }
+    ]
+  },
+  "Adhoc": {
+    "Sequence": [
+      {
+        "Cost": 3.1,
+        "Name": "Battle Shout",
+        "Key": "4",
+        "InCombat": "i dont care",
+        "WhenUsable": true,
+        "Requirement": "!Battle Shout"
+      },
+      {
+        "Name": "Food",
+        "Key": "=",
+        "Requirement": "Health% < 60",
+        "Cost": 3
+      }
+    ]
+  },
+  "NPC": {
+    "Sequence": [
+      {
+        "Name": "Repair",
+        "Key": "C",
+        "Requirement": "Durability% < 35",
+        "PathFilename": "5_Gnome_Vendor.json",
+        "Cost": 6
+      },
+      {
+        "Name": "Sell",
+        "Key": "C",
+        "Requirements": [
+          "BagFull",
+          "BagGreyItem"
+        ],
+        "PathFilename": "5_Gnome_Vendor.json",
+        "Cost": 6
+      }
+    ]
+  }
+}

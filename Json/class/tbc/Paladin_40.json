@@ -1,0 +1,254 @@
+{
+  "ClassName": "Paladin",
+  //"Mode": "AttendedGrind",
+  //"PathFilename": "_pack\\30-40\\Alterac Mountains\\32-36 Yettis-Ogers.json",
+  "PathFilename": "_pack\\30-40\\Swamp of Sorrows\\38-42 Misty Valley.json",
+  "UseMount": false,
+  "Mount": { "Key": "N0"},
+  "PathThereAndBack": false,
+  "PathReduceSteps": true,
+  "IntVariables": {
+    "MIN_SPEED_SEAL": 3000,
+    "MIN_TARGET_HP%": 20,
+    "MIN_HP_BEFORE_HEAL%": 20,
+    "MIN_MANA%": 30
+  },
+  "Pull": {
+    "Sequence": [
+      {
+        "Name": "Seal of the Crusader",
+        "Key": "6",
+        "WhenUsable": true,
+        "Requirements": [
+          "!Seal of the Crusader",
+          "!Judgement of the Crusader"
+        ]
+      },
+      {
+        "Name": "Judgement",
+        "Key": "1",
+        "WhenUsable": true,
+        "Requirements": [
+          "SpellInRange:0",
+          "Seal of the Crusader",
+          "!Judgement of the Crusader"
+        ]
+      }
+    ]
+  },
+  "Combat": {
+    "Sequence": [
+      {
+        "Name": "Divine Protection",
+        "Key": "N1",
+        "WhenUsable": true,
+        "Requirements": [
+          "Health% < MIN_HP_BEFORE_HEAL%",
+          "!Blessing of Protection"
+        ]
+      },
+      {
+        "Name": "Blessing of Protection",
+        "Key": "N2",
+        "WhenUsable": true,
+        "Requirements": [
+          "Health% < MIN_HP_BEFORE_HEAL%",
+          "!Divine Protection"
+        ]
+      },
+      {
+        "Name": "Lay on Hands",
+        "Key": "N3",
+        "WhenUsable": true,
+        "Requirements": [
+          "Health% < MIN_HP_BEFORE_HEAL%",
+          "!Blessing of Protection && CD_Blessing of Protection > 0",
+          "!Divine Protection && CD_Divine Protection > 0"
+        ]
+      },
+      {
+        "Name": "Holy Light",
+        "Key": "3",
+        "HasCastBar": true,
+        "WhenUsable": true,
+        "Requirements": [
+          "Health% < 75",
+          "(Blessing of Protection || Divine Protection)"
+        ]
+      },
+      {
+        "Name": "Flash of Light",
+        "Key": "8",
+        "HasCastBar": true,
+        "WhenUsable": true,
+        "Requirements": [
+          "Health% < 60",
+          "!Blessing of Protection && CD_Blessing of Protection > 0 && !Divine Protection && CD_Divine Protection > 0",
+          "MobCount < 2",
+          "LastMainHandMs <= 1000"
+        ],
+        "Cooldown": 6000
+      },
+      {
+        "Name": "Consecration",
+        "Key": "0",
+        "WhenUsable": true,
+        "Requirements": [
+          "Mana% > 50",
+          "MobCount > 1"
+        ]
+      },
+      {
+        "Name": "Seal of the Crusader",
+        "Key": "6",
+        "Requirements": [
+          "!Seal of the Crusader",
+          "!Judgement of the Crusader",
+          "TargetHealth% > MIN_TARGET_HP%"
+        ]
+      },
+      {
+        "Name": "Hammer of Justice",
+        "Key": "7",
+        "WhenUsable": true,
+        "Requirements": [
+          "Judgement of the Crusader && CD_Judgement <= GCD && TargetHealth% > MIN_TARGET_HP% || TargetCastingSpell"
+        ]
+      },
+      {
+        "Name": "Judgement",
+        "Key": "1",
+        "WhenUsable": true,
+        "Requirements": [
+          "!Judgement of the Crusader || Hammer of Justice || CD_Hammer of Justice > CD_Judgement",
+          "Seal of Command || Seal of Righteousness || Seal of the Crusader",
+          "Mana% >= MIN_MANA%"
+        ],
+        "AfterCastDelay": 25
+      },
+      {
+        "Name": "Seal of Command",
+        "Key": "9",
+        "WhenUsable": true,
+        "Requirements": [
+          "Talent:Seal of Command && MainHandSpeed > MIN_SPEED_SEAL || CD_Hammer of Justice <= CD_Judgement",
+          "!Seal of Command",
+          "Judgement of the Crusader",
+          "TargetHealth% > MIN_TARGET_HP%"
+        ]
+      },
+      {
+        "Name": "Seal of Righteousness",
+        "Key": "2",
+        "WhenUsable": true,
+        "Requirements": [
+          "!Talent:Seal of Command || MainHandSpeed < MIN_SPEED_SEAL",
+          "!Seal of Righteousness",
+          "!Seal of Command",
+          "Judgement of the Crusader",
+          "TargetHealth% > MIN_TARGET_HP%"
+        ]
+      },
+      {
+        "Name": "AutoAttack",
+        "Requirements": [
+          "!Divine Protection",
+          "!Blessing of Protection"
+        ]
+      },
+      {
+        "Name": "Approach",
+        "Log": false
+      }
+    ]
+  },
+  "Adhoc": {
+    "Sequence": [
+      {
+        "Name": "Blessing of Wisdom",
+        "Key": "4",
+        "Requirement": "!Blessing of Wisdom"
+      },
+      {
+/*
+#showtooltip
+/use Heavy Weightstone
+/use 16
+/click StaticPopup1Button1
+*/
+        "Name": "sharpen",
+        "Key": "F1",
+        "WhenUsable": true,
+        "HasCastbar": true,
+        "Requirement": "!HasMainHandEnchant",
+        "AfterCastWaitCastbar": true,
+        "AfterCastAuraExpected": true
+      },
+      {
+        "Name": "Sanctity Aura",
+        "Key": "5",
+        "Requirements": [
+          "Talent:Sanctity Aura",
+          "!Form:Paladin_Sanctity_Aura"
+        ],
+        "AfterCastAuraExpected": true
+      },
+      {
+        "Name": "Retribution Aura",
+        "Key": "5",
+        "Requirements": [
+          "!Talent:Sanctity Aura",
+          "!Form:Paladin_Retribution_Aura"
+        ],
+        "AfterCastAuraExpected": true
+      },
+      {
+        "Name": "Gift of the Naaru",
+        "Key": "F4",
+        "Cost": 3.1,
+        "InCombat": "i dont care",
+        "WhenUsable": true,
+        "HasCastbar": true,
+        "Requirements": [
+          "Race:Draenei",
+          "Health% < 50"
+        ]
+      }
+    ]
+  },
+  "Parallel": {
+    "Sequence": [
+      {
+        "Name": "Drink",
+        "Key": "-",
+        "Requirement": "Mana% < 40"
+      },
+      {
+        "Name": "Food",
+        "Key": "=",
+        "Requirement": "Health% < 40"
+      }
+    ]
+  },
+  "NPC": {
+    "Sequence": [
+      {
+        "Cost": 6,
+        "Name": "Repair",
+        "Key": "C",
+        "Requirement": "Durability% < 35",
+        "PathFilename": "25-30_Hillsbrad Foothills_Vendor.json"
+      },
+      {
+        "Cost": 6,
+        "Name": "Sell",
+        "Key": "C",
+        "Requirements": [
+          "BagFull",
+          "BagGreyItem"
+        ],
+        "PathFilename": "25-30_Hillsbrad Foothills_Vendor.json"
+      }
+    ]
+  }
+}

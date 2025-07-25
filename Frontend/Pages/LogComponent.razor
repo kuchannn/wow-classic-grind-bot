@@ -1,0 +1,48 @@
+﻿@using System.Linq
+@using Serilog.Events
+
+@inject LoggerSink sink
+
+<div class="col-sm" style="@(MaxHeight > 0 ? $"overflow: auto; max-height: {MaxHeight}px;" : string.Empty)">
+    @{
+        int head = Math.Max(sink.Head - 1, 0);
+    }
+    @for (int i = LoggerSink.SIZE; i >= 0; i--)
+    {
+        var evt = sink.Log[(head + i) % LoggerSink.SIZE];
+        if (evt == null) continue;
+        <p class="@logLevelColor[(int)evt.Level] mb-0">
+            <span class="font-monospace">@evt.Timestamp.ToString("HH:mm:ss")</span>
+            <span class="font-monospace">@evt.RenderMessage()</span>
+        </p>
+    }
+</div>
+
+@code {
+    [Parameter]
+    public int MaxHeight { get; set; } = 400;
+
+    private static readonly string[] logLevelColor = {
+        string.Empty,   // LogEventLevel.Verbose
+        "text-success",      // LogEventLevel.Debug
+        string.Empty,   // LogEventLevel.Information
+        "text-warning",      // LogEventLevel.Warning
+        "text-danger",       // LogEventLevel.Error
+        "text-danger"        // LogEventLevel.Fatal
+    };
+
+    protected override void OnInitialized()
+    {
+        sink.OnLogChanged += LogChanged;
+    }
+
+    public void Dispose()
+    {
+        sink.OnLogChanged -= LogChanged;
+    }
+
+    private void LogChanged()
+    {
+        base.InvokeAsync(StateHasChanged);
+    }
+}

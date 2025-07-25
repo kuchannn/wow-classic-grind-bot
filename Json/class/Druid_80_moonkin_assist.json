@@ -1,0 +1,293 @@
+{
+  "ClassName": "Druid",
+  //"Mode": "AttendedGrind", //Grind
+  "Mode": "AssistFocus",
+  "Loot": true,
+  "Skin": true,
+  "Mount": {"Key":"N0"},
+  "PathFilename": "_pack\\60-70\\Terokkar Forest\\62-64.json",
+  "PathThereAndBack": false,
+  "PathReduceSteps": true,
+  "NPCMaxLevels_Above": 3,
+  "NPCMaxLevels_Below": 20,
+  "IntVariables": {
+    "MIN_TARGET_HP_DOT%": 20,
+    "MIN_TARGET_HP_CD%": 75,
+    "TDebuff_Faerie Fire": 136033,
+    "TDebuff_Mangle": 132135,
+    "FBuff_Mount": 132239,
+    "USE_TRINKET_1": 1,
+    "USE_TRINKET_2": 1
+  },
+  "Jump":
+  {
+    "PressDuration": 200
+  },
+  "Form": {
+    "Sequence": [
+      {
+        //macro: /cancelform
+        "Name": "cancelform",
+        "Key": "F1",
+        "Form": "None"
+      },
+      {
+        "Name": "Bear Form",
+        "Key": "F2",
+        "Form": "Druid_Bear"
+      },
+      {
+        "Name": "Cat Form",
+        "Key": "F3",
+        "Form": "Druid_Cat"
+      },
+      {
+        "Name": "Swift Flight Form",
+        "Key": "F4",
+        "Form": "Druid_Flight",
+        "Requirement": "Mana% > 50 && !AddVisible"
+      },
+      {
+        "Name": "Moonkin Form",
+        "Key": "F5",
+        "Form": "Druid_Moonkin"
+      },
+      {
+        "Name": "Travel Form",
+        "Key": "F6",
+        "Form": "Druid_Travel",
+        "Requirement": "Mana% > 50 && !AddVisible"
+      }
+    ]
+  },
+  "Pull": {
+    "Sequence": [
+      {
+        "Name": "Regrowth",
+        "Key": "0",
+        "Form": "None",
+        "HasCastBar": true,
+        "WhenUsable": true,
+        "AfterCastWaitBuff": true,
+        "Requirements": [
+          "Health% < 65",
+          "!Regrowth"
+        ]
+      },
+      {
+        "Name": "Rejuvenation",
+        "Key": "6",
+        "Form": "None",
+        "BeforeCastStop": true,
+        "AfterCastWaitBuff": true,
+        "Requirements": [
+          "Health% < 75",
+          "!Rejuvenation"
+        ]
+      },
+      {
+        "Name": "Moonfire",
+        "Key": "5",
+        "Form": "Druid_Moonkin",
+        "BeforeCastStop": true,
+        "AfterCastWaitCombat": true,
+        "Requirements": [
+          "!Moonfire"
+        ]
+      },
+      {
+        "Name": "Approach",
+        "Requirements": [
+          "MinRange > 36"
+        ]
+      }
+    ]
+  },
+  "AssistFocus": {
+    "Sequence": [
+      {
+        "Name": "Mark of the Wild",
+        "Key": "4",
+        "Form": "None",
+        "Requirements": [
+          "!Mounted",
+          "!F_Mark of the Wild",
+          "SpellInRange:5"
+        ]
+      },
+      {
+        "Name": "Thorns",
+        "Key": "7",
+        "Form": "None",
+        "Requirements": [
+          "!Mounted",
+          "!F_Thorns",
+          "SpellInRange:8"
+        ]
+      },
+      {
+        "Name": "Regrowth",
+        "Key": "0",
+        "Form": "None",
+        "HasCastBar": true,
+        "WhenUsable": true,
+        "AfterCastAuraExpected": true,
+        "Requirements": [
+          "!Mounted",
+          "!F_Regrowth",
+          "FocusHealth% < 65",
+          "SpellInRange:6"
+        ]
+      },
+      {
+        "Name": "Rejuvenation",
+        "Key": "6",
+        "Form": "None",
+        "BeforeCastStop": true,
+        "AfterCastWaitBuff": true,
+        "Requirements": [
+          "!Mounted",
+          "!F_Rejuvenation",
+          "FocusHealth% < 75",
+          "SpellInRange:7"
+        ]
+      }
+    ]
+  },
+  "Combat": {
+    "Sequence": [
+      {
+        "Name": "Regrowth",
+        "Key": "0",
+        "Form": "None",
+        "HasCastBar": true,
+        "WhenUsable": true,
+        "AfterCastAuraExpected": true,
+        "AfterCastWaitCastbar": true,
+        "Requirements": [
+          "Health% < 30"
+        ]
+      },
+      {
+        "Name": "Trinket 1",
+        "Key": "F11",
+        "Item": true,
+        "WhenUsable": true,
+        "BaseAction": true,
+        "Requirements": [
+          "USE_TRINKET_1 == 1",
+          "TargetAlive",
+          "TargetHealth% > MIN_TARGET_HP_CD%"
+        ]
+      },
+      {
+        "Name": "Trinket 2",
+        "Key": "F12",
+        "Item": true,
+        "WhenUsable": true,
+        "BaseAction": true,
+        "Requirements": [
+          "USE_TRINKET_2 == 1",
+          "TargetAlive",
+          "TargetHealth% > MIN_TARGET_HP_CD%"
+        ]
+      },
+      {
+        "Name": "Moonfire",
+        "Key": "5",
+        "Form": "Druid_Moonkin",
+        "Requirements": [
+          "!Moonfire",
+          "TargetHealth% > 25"
+        ]
+      },
+      {
+        "Name": "Wrath",
+        "Key": "2",
+        "Form": "Druid_Moonkin",
+        "HasCastBar": true
+      },
+      {
+        "Name": "Approach",
+        "Requirements": [
+          "Mana < Cost_Wrath",
+          "!Casting"
+        ]
+      }
+    ]
+  },
+  "Adhoc": {
+    "Sequence": [
+      {
+        "Name": "Mark of the Wild",
+        "Key": "4",
+        "Form": "None",
+        "Requirement": "!Mark of the Wild"
+      },
+      {
+        "Name": "Thorns",
+        "Key": "7",
+        "Form": "None",
+        "Requirement": "!Thorns"
+      },
+      {
+        "Name": "Innervate",
+        "Cost": 3,
+        "InCombat": "idc",
+        "Key": "N1",
+        "WhenUsable": true,
+        "Requirement": "Mana% < 15"
+      },
+      {
+        "Name": "MountUp",
+        "Key": "N0",
+        "InCombat": false,
+        "WhenUsable": true,
+        "HasCastbar": true,
+        "AfterCastWaitCastbar": true,
+        "AfterCastWaitGCD": true,
+        "Requirements": [
+          "!Mounted",
+          "FBuff_Mount > 0"
+        ]
+      }
+    ]
+  },
+  "Parallel": {
+    "Sequence": [
+      {
+        "Name": "Food",
+        "Key": "=",
+        "Form": "None",
+        "Requirement": "Health% < 40"
+      },
+      {
+        "Name": "Drink",
+        "Key": "-",
+        "Form": "None",
+        "Requirement": "Mana% < 40 && DrinkCount > 0"
+      }
+    ]
+  },
+  "NPC": {
+    "Sequence": [
+      {
+        "Name": "Repair",
+        "Key": "C",
+        "Requirement": "Durability% < 35",
+        "PathFilename": "Terokkar Forest_2023_09_04_16_46_24.json",
+        "Cost": 6
+      },
+      {
+        "Name": "Sell",
+        "Key": "C",
+        "Requirements": [
+          "BagFull",
+          "BagGreyItem"
+        ],
+        "PathFilename": "Terokkar Forest_2023_09_04_16_46_24.json",
+        "Cost": 6
+      }
+    ]
+  }
+}

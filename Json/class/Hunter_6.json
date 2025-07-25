@@ -1,0 +1,110 @@
+{
+  "ClassName": "Hunter",
+  "PathFilename": "_pack\\1-20\\Dwarf.Gnome\\6-10_Dun Morogh.json",
+  "Pull": {
+    "Sequence": [
+      {
+        "Name": "Serpent Sting",
+        "Key": "2",
+        "BeforeCastStop": true,
+        "Requirements": [
+          "HasRangedWeapon",
+          "HasAmmo",
+          "!InMeleeRange",
+          "!Serpent Sting"
+        ]
+      }
+    ]
+  },
+  "Combat": {
+    "Sequence": [
+      {
+        "Name": "Auto Shot",
+        "Key": "3",
+        "Item": true,
+        "BeforeCastStop": true,
+        "Requirements": [
+          "HasRangedWeapon",
+          "HasAmmo",
+          "!InMeleeRange",
+          "!AutoShot"
+        ]
+      },
+      {
+        "Name": "Stepback",
+        "Key": "S",
+        "PressDuration": 3000,
+        "BaseAction": true,
+        "Requirements": [
+          "TargetsMe",
+          "LastAutoShotMs < 400",
+          "!InMeleeRange",
+          "AutoShot"
+        ],
+        "Interrupt": "RangedSwing < -500 && TargetAlive"
+      },
+      {
+        "Name": "Raptor Strike",
+        "Key": "4",
+        "WhenUsable": true,
+        "AfterCastWaitSwing": true,
+        "Requirements": [
+          "MainHandSwing > -400",
+          "InMeleeRange",
+          "!AutoShot"
+        ]
+      },
+      {
+        "Name": "AutoAttack",
+        "Requirements": [
+          "InMeleeRange",
+          "!AutoShot"
+        ]
+      }
+    ]
+  },
+  "Adhoc": {
+    "Sequence": [
+      {
+        "Name": "Aspect of the Monkey",
+        "Key": "5",
+        "Requirement": "!Aspect of the Monkey"
+      }
+    ]
+  },
+  "Parallel": {
+    "Sequence": [
+      {
+        "Name": "Food",
+        "Key": "6",
+        "Requirement": "Health% < 60"
+      },
+      {
+        "Name": "Drink",
+        "Key": "7",
+        "Requirement": "Mana% < 60"
+      }
+    ]
+  },
+  "NPC": {
+    "Sequence": [
+      {
+        "Name": "Repair",
+        "Key": "C",
+        "Requirement": "Durability% < 35",
+        "PathFilename": "1_Gnome_Vendor.json",
+        "Cost": 6
+      },
+      {
+        "Name": "Sell",
+        "Key": "C",
+        "Requirements": [
+          "BagFull",
+          "BagGreyItem"
+        ],
+        "PathFilename": "1_Gnome_Vendor.json",
+        "Cost": 6
+      }
+    ]
+  }
+}

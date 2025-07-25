@@ -1,0 +1,260 @@
+﻿@page "/FrameConfiguration"
+
+@inject ILogger logger
+@inject NavigationManager NavigationManager
+@inject AddonConfigurator addonConfigurator
+@inject FrameConfigurator frameConfigurator
+@inject DataConfig dataConfig
+@inject IAddonDataProvider reader
+
+@implements IDisposable
+
+<div class="container">
+
+    @if (saved)
+    {
+        <div class="alert alert-success" role="alert">
+            <h4 class="alert-heading">Configuration Saved Successfully!</h4>
+            <p>Please wait until restart! And press <b>Reload</b> when it prompts!</p>
+            <hr>
+            <p class="mb-0">@playerClass</p>
+        </div>
+    }
+    
+    <div class="card mb-3">
+        <div class="card-header">
+            <h4>5. Frame Configuration</h4>
+            <p class="mb-0">
+                @if (FrameConfig.Exists())
+                {
+                    <span class="text-success">Frame Configuration file already exists</span>
+                }
+                else
+                {
+                    <span class="text-warning">Frame configuration not found - Please follow the setup process</span>
+                }
+            </p>
+        </div>
+        <div class="card-body">
+            <p>This step configures the game frame detection for reading game state from the colored pixels displayed by the addon.</p>
+            <p><strong>Important:</strong> Make sure you have completed the Addon Configuration step and the addon is properly installed and visible in-game.</p>
+            <div class="alert alert-warning">
+                <h6>Before starting:</h6>
+                <ul>
+                    <li>Start the game and login with a character</li>
+                    <li>Make sure the addon is enabled and running</li>
+                    <li>You should see flashing pixels/cells at the top left corner of the game window</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="card-group mb-3 text-center">
+
+        @if (FrameConfig.Exists())
+        {
+            <div class="card mb-4 box-shadow">
+                <div class="card-header">
+                    <h4 class="my-0 font-weight-normal">Delete</h4>
+                </div>
+                <div class="card-body">
+                    <ul class="list-unstyled mt-1 mb-1">
+                        <li>Experiencing troubles?</li>
+                        <li>Delete current config and do it again!</li>
+                    </ul>
+                    <button class="btn btn-lg btn-block btn-danger" @onclick="DeleteCurrentConfig">
+                        <span>Delete</span>
+                    </button>
+                </div>
+            </div>
+        }
+
+        <div class="card mb-4 box-shadow">
+            <div class="card-header">
+                <h4 class="my-0 font-weight-normal">Auto</h4>
+            </div>
+            <div class="card-body">
+                <ul class="list-unstyled mt-1 mb-1">
+                    <li>1-Click</li>
+                    <li>Recommended in general</li>
+                </ul>
+                <button class="btn btn-lg btn-block btn-primary" @onclick="StartAutoConfigure" disabled="@(manual || disabled)">
+                    <span>Start</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="card mb-4 box-shadow">
+            <div class="card-header">
+                <h4 class="my-0 font-weight-normal">Manual</h4>
+            </div>
+            <div class="card-body">
+                <ul class="list-unstyled mt-1 mb-1">
+                    <li>Follow few steps</li>
+                    <li>Recommended for troubleshooting</li>
+                </ul>
+                <button type="button" class="btn btn-lg btn-block @manualButtonStyle" @onclick="ToggleManualConfig" disabled="@disabled">
+                    @manualButtonText
+                </button>
+            </div>
+        </div>
+    </div>
+
+    @if (frameConfigurator.AddonNotVisible)
+    {
+        <ul class="list-group">
+            <li class="list-group-item">
+                I saw @frameConfigurator.DataFrames.Length data frames. But its keep changing! The addon is not visible.
+            </li>
+            <li class="list-group-item">
+                <p class="text-danger">Restart the game</p>
+            </li>
+            <li class="list-group-item">
+                <p class="text-danger">Enable the addon</p>
+            </li>
+            <li class="list-group-item">
+                <p class="text-danger">Make sure nothing obstruct</p>
+            </li>
+        </ul>
+        <br>
+    }
+
+    <h5 class="row col-md-12">Your screen:</h5>
+
+    <div class="row col-md-12">
+        @if (@frameConfigurator.DataFrames.Length != frameConfigurator.DataFrameMeta.Count)
+        {
+            <img style="border:1px solid red; margin: 5px" src="@frameConfigurator.ImageBase64" alt="Red dot" />
+        }
+        else
+        {
+            <img style="border:1px solid green; margin: 5px" src="@frameConfigurator.ImageBase64" alt="Red dot" />
+        }
+    </div>
+
+    <span class="row col-md-12">@playerClass</span>
+
+    @if (manual)
+    {
+        <br>
+        <ul class="list-group">
+            <li class="list-group-item">
+                Step 1: Please ensure the addon <span class="px-2"><b>@addonConfig.Title</b></span> found in the addon folders is running. You should see the multi-coloured pixels at the top left of the screen.
+                @if (frameConfigurator.DataFrames.Length != frameConfigurator.DataFrameMeta.Count)
+                {
+                    <br>
+                    <img src="_content/Frontend/img/addon-normal.png" />
+                }
+            </li>
+            <li class="list-group-item">
+                Step 2: Now we are going to put the addon into configuration mode, this will change the addon colours displayed. In the wow chat window: type <span class="ml-1"><b>&#47;@addonConfig.Command</b></span>
+                @if (frameConfigurator.DataFrames.Length != frameConfigurator.DataFrameMeta.Count)
+                {
+                    <br>
+                    <img src="_content/Frontend/img/addon-config.png" />
+                }
+            </li>
+            <li class="list-group-item">
+                Step 3: Should see @frameConfigurator.DataFrameMeta.Count frames - Now i see @frameConfigurator.DataFrames.Length data frames.
+            </li>
+            @if (frameConfigurator.DataFrameMeta.Count != 0 && frameConfigurator.DataFrames.Length == frameConfigurator.DataFrameMeta.Count)
+            {
+                <li class="list-group-item">
+                    <span>Step 4: Now return to normal mode, In the wow chat window: type <span class="ml-1"><b>&#47;@addonConfig.Command</b></span></span>
+                </li>
+            }
+            @if (!string.IsNullOrEmpty(playerClass) && !playerClass.Contains("unable to read player class", StringComparison.OrdinalIgnoreCase) && !playerClass.Contains("none", StringComparison.OrdinalIgnoreCase))
+            {
+                <li class="list-group-item">
+                    Step 5: This is perfect, just click the Save button.
+                    <br>
+                    <button class="btn btn-sm btn-success" @onclick="FinishManualConfigure">
+                        <span>Save</span>
+                    </button>
+                </li>
+            }
+        </ul>
+    }
+    <hr />
+    <LogComponent />
+</div>
+@code {
+
+    private AddonConfig addonConfig = null!;
+
+    private bool disabled = true;
+    private bool saved = false;
+    private bool manual { get; set; } = false;
+    private string manualButtonText { get; set; } = "Start";
+    private string manualButtonStyle => manualButtonText == "Start" ? "btn-primary" : "btn-danger";
+    private string playerClass = string.Empty;
+
+    protected override void OnInitialized()
+    {
+        addonConfig = addonConfigurator.Config;
+        frameConfigurator.OnUpdate += OnUpdate;
+
+        if (!FrameConfig.Exists())
+            disabled = false;
+    }
+
+    public void Dispose()
+    {
+        frameConfigurator.OnUpdate -= OnUpdate;
+        frameConfigurator.Dispose();
+    }
+
+
+    private void OnUpdate()
+    {
+        if (frameConfigurator.TryResolveRaceAndClass(out UnitRace race, out UnitClass @class, out ClientVersion version))
+        {
+            playerClass = $"{version.ToStringF()} {race.ToStringF()} {@class.ToStringF()}";
+        }
+        else
+        {
+            playerClass = "unable to read player class";
+        }
+
+        saved = frameConfigurator.Saved;
+
+        base.InvokeAsync(StateHasChanged);
+    }
+
+    public void ToggleManualConfig()
+    {
+        manual = !manual;
+        if (manual)
+        {
+            manualButtonText = "Stop";
+        }
+        else
+        {
+            playerClass = string.Empty;
+            manualButtonText = "Start";
+        }
+
+        frameConfigurator.ToggleManualConfig();
+    }
+
+    public void FinishManualConfigure()
+    {
+        if (frameConfigurator.FinishConfig())
+            NavigationManager.NavigateTo("/RestartServer");
+    }
+
+    public async void StartAutoConfigure()
+    {
+        await Task.Delay(1);
+        bool success = frameConfigurator.StartAutoConfig();
+        OnUpdate();
+        if (success)
+            NavigationManager.NavigateTo("/RestartServer");
+    }
+
+    public void DeleteCurrentConfig()
+    {
+        FrameConfigurator.DeleteConfig();
+        NavigationManager.NavigateTo("/RestartServer");
+    }
+}

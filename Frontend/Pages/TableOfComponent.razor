@@ -1,0 +1,167 @@
+﻿@using System.Reflection
+
+@if (Obj != null)
+{
+    <table class="table table-bordered">
+        <tbody>
+            @foreach (var property in GetPropertyValues(Obj))
+            {
+                <tr>
+                    <td>@(property.Name)</td>
+                    <td>
+                        <input value="@property.Value" class="form-control" Disabled="true" />
+                    </td>
+                </tr>
+            }
+            @foreach (var property in GetFunctionValues(Obj, typeof(bool)))
+            {
+                <tr>
+                    <td>@(property.Name)</td>
+                    <td>
+                        <input value="@property.Value" class="form-control" Disabled="true" />
+                    </td>
+                </tr>
+            }
+            @foreach (var property in GetFunctionValues(Obj, typeof(int)))
+            {
+                <tr>
+                    <td>@(property.Name)</td>
+                    <td>
+                        <input value="@property.Value" class="form-control" Disabled="true" />
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+
+    [Parameter]
+    public object? Obj { get; set; }
+
+    public class ObjectField
+    {
+        public string Name { get; init; } = string.Empty;
+        public string Value { get; init; } = string.Empty;
+    }
+
+    static List<ObjectField> GetPropertyValues(object obj)
+    {
+        List<ObjectField> propList = new List<ObjectField>();
+        string objName = obj.ToString() ?? "";
+        if (objName.Length > 0) objName += ".";
+
+        foreach (var pinfo in obj.GetType().GetProperties())
+        {
+            if (pinfo.GetIndexParameters().Length != 0) return propList;
+
+            var value = pinfo.GetValue(obj, null);
+            if (value == null) continue;
+
+            if (pinfo.PropertyType.IsArray && pinfo.PropertyType != typeof(ActionBarCost[]))
+            {
+                var arr = value as object[];
+                if (arr == null) continue;
+                for (var i = 0; i < arr.Length; i++)
+                {
+                    if (arr[i] != null && arr[i].GetType().IsPrimitive)
+                    {
+                        propList.Add(new ObjectField() { Name = objName + pinfo.Name + i.ToString(), Value = arr[i].ToString() ?? "" });
+                    }
+                    else
+                    {
+                        var lst = GetPropertyValues(arr[i]);
+                        if (lst != null && lst.Count > 0)
+                            propList.AddRange(lst);
+                    }
+                }
+            }
+            else if (pinfo.PropertyType == typeof(ActionBarCost[]))
+            {
+                var arr = value as ActionBarCost[];
+                if (arr == null) continue;
+
+                for (int i = 0; i < arr.Length; i += ActionBar.NUM_OF_COST)
+                {
+                    int index = i / ActionBar.NUM_OF_COST;
+                    string keybind = KeyReader.ActionBarSlotMap.FirstOrDefault(x => x.Value == (index + 1)).Key;
+                    string name = $"[idx:{i,2} | bar:{keybind,2}]";
+                    string allCosts = string.Empty;
+
+                    for (var j = i; j < i + ActionBar.NUM_OF_COST; j++)
+                    {
+                        ActionBarCost abc = arr[j];
+                        if (!abc.Equals(ActionBarCostReader.DefaultCost))
+                        {
+                            allCosts += (allCosts.Length != 0 ? " | " : "") + $"{abc.Cost} {abc.PowerType.ToStringF()}";
+                        }
+                    }
+
+                    if (!string.IsNullOrEmpty(allCosts))
+                    {
+                        propList.Add(new ObjectField()
+                            {
+                                Name = name,
+                                Value = allCosts
+                            });
+                    }
+                }
+            }
+            else if (pinfo.PropertyType.IsGenericType)
+            {
+                if (value.GetType() == typeof(HashSet<int>))
+                {
+                    var collection = value as HashSet<int>;
+                    if (collection == null) continue;
+
+                    int i = 0;
+                    foreach (var item in collection)
+                    {
+                        propList.Add(new ObjectField() { Name = "    " + objName + pinfo.Name + $"[{i}]", Value = item.ToString() ?? "" });
+                        i++;
+                    }
+                }
+            }
+            else
+            {
+                if (pinfo.PropertyType.IsPrimitive || pinfo.PropertyType.IsEnum || value.GetType() == typeof(string))
+                {
+                    propList.Add(new ObjectField() { Name = objName + pinfo.Name, Value = value.ToString() ?? "" });
+                }
+                else if (value is RecordInt recordInt)
+                {
+                    propList.Add(new ObjectField() { Name = objName + pinfo.Name, Value = recordInt.Value.ToString() });
+                }
+                else if (value is AuraCount auraCount)
+                {
+                    propList.Add(new ObjectField() { Name = objName + pinfo.Name, Value = auraCount.ToString() });
+                }
+            }
+        }
+
+        return propList;
+    }
+
+    static List<ObjectField> GetFunctionValues(object obj, Type t)
+    {
+        List<ObjectField> propList = new List<ObjectField>();
+        string objName = obj.ToString() ?? "";
+        if (objName.Length > 0) objName += ".";
+
+        foreach (var minfo in obj.GetType().GetMethods(BindingFlags.DeclaredOnly | BindingFlags.Public | BindingFlags.Instance))
+        {
+            if (minfo.ReturnType != t)
+                continue;
+
+            ParameterInfo[] parameters = minfo.GetParameters();
+            if (parameters.Length == 0)
+            {
+                propList.Add(new ObjectField() { Name = objName + minfo.Name, Value = minfo.Invoke(obj, null)!.ToString() ?? "" });
+            }
+        }
+
+        return propList;
+    }
+
+}

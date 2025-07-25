@@ -1,0 +1,25 @@
+﻿<span class="float-right" style="font-size:small">
+    @if (Value.Gold > 0)
+    {
+        @Value.Gold <img height="12px" src="@GOLD" />
+    }
+
+    @if (Value.Silver > 0)
+    {
+        @Value.Silver <img height="12px" src="@SILVER" />
+    }
+
+    @if (Value.Copper > 0)
+    {
+        @Value.Copper <img height="12px" src="@COPPER" />
+    }
+</span>
+
+@code {
+    [Parameter]
+    public Currency Value { get; set; }
+
+    private const string GOLD = "_content/Frontend/img/money-gold.png";
+    private const string SILVER = "_content/Frontend/img/money-silver.png";
+    private const string COPPER = "_content/Frontend/img/money-copper.png";
+}

@@ -1,0 +1,139 @@
+﻿@page "/"
+
+@inject ILogger logger
+
+@inject IBotController botController
+@inject IJSRuntime JSRuntime
+@inject AddonConfigurator addonConfigurator
+@inject FrontendUpdate updater // TODO: this is a hack to instantiate this class
+
+@implements IDisposable
+
+<div class="container-fluid">
+    <div class="row">
+        @if (AddonConfig.Exists() && FrameConfig.Exists())
+        {
+            <div class="col-sm">
+                <ScreenshotComponent Stretch="false" />
+                <table width="100%" style="margin-top: 10px; margin-bottom: 10px;">
+                    <tbody>
+                        <tr>
+                            <td valign="top">
+                                <RouteComponent Size="400" />
+                            </td>
+                            <td valign="top">
+                                <BagChanges />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <ChatComponent MaxHeight="400" />
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="col-sm" style="margin-left:10px">
+                @if (updateAvailable)
+                {
+                    <div class="card" style="margin-bottom: 10px">
+                        <div class="card-header">
+                            <b>New Addon version available!</b>
+                            <span class="float-right">
+                                <button class="btn btn-sm btn-success">
+                                    <NavLink class="nav-link" href="AddonConfiguration">
+                                        <span style="text-decoration: none;font-weight: bold;color: white;">Update</span>
+                                    </NavLink>
+                                </button>
+                            </span>
+                        </div>
+                    </div>
+                }
+
+                <BotHeader ShowActiveGoal="false" Hide="@(botController.IsBotActive)" />
+                <ProfileSelectorComponent Hide="@(botController.IsBotActive)" />
+
+                @if (botController.ClassConfig == null)
+                {
+                    <PathSelectorComponent Hide="@(botController.IsBotActive)" />
+                }
+                else if (!botController.IsBotActive && botController.ClassConfig!.Mode != Mode.AttendedGrind)
+                {
+                    if (botController.ClassConfig!.Paths.Length > 1)
+                    {
+                        <Accordion>
+                            <AccordionItem Title="Override Paths">
+                                <Content>
+                                    @foreach (var pathSettings in botController.ClassConfig!.Paths)
+                                    {
+                                        <PathSelectorComponent Hide="@(botController.IsBotActive)"
+                                                               Target="@(pathSettings)"
+                                                               TargetIndex="@(Array.IndexOf(botController.ClassConfig!.Paths, pathSettings))" />
+                                    }
+                                </Content>
+                            </AccordionItem>
+                        </Accordion>
+                    }
+                    else
+                    {
+                        <PathSelectorComponent Hide="@(botController.IsBotActive)"
+                                               Target="@(botController.ClassConfig!.Paths.First())"
+                                               TargetIndex="0" />
+                    }
+                }
+
+                <GoalsComponent />
+            </div>
+        }
+        else if (!AddonConfig.Exists())
+        {
+            <div class="container">
+                <div class="alert alert-info" role="alert">
+                    <h4 class="alert-heading">Welcome to WoW Classic Grind Bot!</h4>
+                    <p>This is your first time running the bot. Please follow the setup process to configure the system.</p>
+                    <hr>
+                    <p class="mb-0">Step 1: Configure the addon that reads game state from colored pixels.</p>
+                </div>
+            </div>
+            <AddonConfiguration />
+        }
+        else if (!FrameConfig.Exists())
+        {
+            <div class="container">
+                <div class="alert alert-info" role="alert">
+                    <h4 class="alert-heading">Setup Progress</h4>
+                    <p>Addon configuration is complete! Now we need to configure frame detection.</p>
+                    <hr>
+                    <p class="mb-0">Please ensure WoW is running and you have entered the world with a character.</p>
+                </div>
+            </div>
+            <FrameConfiguration />
+        }
+    </div>
+</div>
+
+<div id="tooltip" display="none" style="position: absolute; display: none;"></div>
+
+
+@code {
+    private bool updateAvailable;
+
+    protected override void OnInitialized()
+    {
+        botController.StatusChanged += OnStatusChanged;
+        botController.ProfileLoaded += OnStatusChanged;
+
+        updateAvailable = addonConfigurator.UpdateAvailable();
+    }
+
+    public void Dispose()
+    {
+        botController.StatusChanged -= OnStatusChanged;
+    }
+
+    private void OnStatusChanged()
+    {
+        base.InvokeAsync(StateHasChanged);
+    }
+}

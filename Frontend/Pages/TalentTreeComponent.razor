@@ -1,0 +1,75 @@
+﻿@using Core.Talents
+
+@inject IAddonReader addonReader
+@inject WApi api
+@inject TalentReader talentReader
+
+<div class="card mt-1">
+    <div class="card-header">
+        Talents
+    </div>
+    <div class="card-body">
+        <div class="row p-0 m-0">
+            @{
+                int maxTier = 0;
+                int maxColumn = 0;
+                int maxTab = 0;
+
+                if (talentReader.Talents.Count > 0)
+                {
+                    maxTier = talentReader.Talents.Max(t => t.Value.TierNum);
+                    maxColumn = talentReader.Talents.Max(t => t.Value.ColumnNum);
+                    maxTab = talentReader.Talents.Max(t => t.Value.TabNum);
+                }
+            }
+
+            @for (int tab = 1; tab <= maxTab; tab++)
+            {
+                <div class="col">
+                    <table class="table">
+                        <tbody>
+                            @for (int tier = 1; tier <= maxTier; tier++)
+                            {
+                                <tr>
+                                    @for (int col = 1; col <= maxColumn; col++)
+                                    {
+                                        var talent = talentReader.Talents.FirstOrDefault(x => x.Value.TabNum == tab && x.Value.TierNum == tier && x.Value.ColumnNum == col);
+                                        if (talent.Key == 0)
+                                        {
+                                            <td></td>
+                                        }
+                                        else
+                                        {
+                                            <td>
+                                                @if (talentReader.Spells.TryGetValue(talent.Key, out int spellId))
+                                                {
+                                                    <a href="@($"{api.SpellId}{@spellId}")" target="_blank" data-wowhead="item=@spellId" class="small" style="text-decoration:none">
+                                                        @DisplayName(talent.Value)
+                                                    </a>
+                                                }
+                                                else
+                                                {
+                                                    @DisplayName(talent.Value)
+                                                }
+                                            </td>
+                                        }
+                                    }
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@code {
+    private string DisplayName(Talent t)
+    {
+        if (t.CurrentRank > 1)
+            return $"{t.CurrentRank}x {t.Name}";
+        else
+            return t.Name;
+    }
+}

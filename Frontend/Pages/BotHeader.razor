@@ -1,0 +1,136 @@
+﻿@using Core.GOAP
+
+@inject IAddonReader addonReader
+@inject PlayerReader playerReader
+@inject CombatLog combatLog
+
+@inject BagReader BagReader
+@inject SpellBookReader SpellBookReader
+@inject TalentReader TalentReader
+@inject ActionBarCostReader ActionBarCostReader
+
+@inject AddonBits Bits
+
+@inject IBotController botController
+@inject LevelTracker levelTracker
+@inject WApi api
+
+@implements IDisposable
+
+<Card class="@(Hide ? "hide" : string.Empty)">
+    <CardHeader>
+        <div class="d-flex">
+            <div class="p-2 flex-grow-1 bd-highlight">
+                Player
+            </div>
+            <div class="p-2 bd-highlight">
+                <div class="align-items-start">
+                    <span>@playerReader.Race.ToStringF() @playerReader.Class.ToStringF()</span>
+                </div>
+                <div class="align-items-end">
+                    <Badge Color="@CombatBadge()">@GoapKey_Extension.ToStringF(GoapKey.incombat, PlayerInCombat)</Badge>
+                </div>
+            </div>
+            <div class="p-2 bd-highlight">
+                <InitButton /> <ToggleButton Disable="@(botController.ClassConfig?.Mode == Mode.AttendedGather)" />
+            </div>
+        </div>
+    </CardHeader>
+    <CardBody class="p-0">
+        <table class="table">
+            <tbody>
+                <tr>
+                    <th>Level @playerReader.Level.Value<br>(XP: @((int)playerReader.PlayerXpPercent)%)</th>
+                    <th>Health / Resource:</th>
+                    <th>Bag Items:</th>
+                    <th>Actionbar / Spell / Talent:</th>
+                    <th>Target:</th>
+                </tr>
+                <tr>
+                    <td>
+                        Time to level: @DisplayTimeToLevel()<br />
+                        at @levelTracker.PredictedLevelUpTime.ToString("HH:mm:ss")
+                    </td>
+                    <td>@playerReader.HealthCurrent() (@playerReader.HealthPercent() %)<br />@playerReader.PTCurrent() (@playerReader.PTPercentage() %)</td>
+
+                    <td>@BagReader.BagItems.Count / @BagReader.SlotCount</td>
+                    <td>@ActionBarCostReader.Count / @SpellBookReader.Count / @TalentReader.Count</td>
+                    <td>
+                        @if (Bits.Target())
+                        {
+                            <a href="@($"{api.NpcId}{playerReader.TargetId}")" target="_blank">
+                                <div>
+                                    @addonReader.TargetName<br />
+                                    (@playerReader.TargetLevel) @((int)playerReader.TargetHealthPercent()) %<br />
+                                    GUID: @playerReader.TargetGuid
+
+                                    @if (playerReader.ComboPoints() > 0)
+                                    {
+                                        <div>Combo Points: @playerReader.ComboPoints()</div>
+                                    }
+                                    @if (combatLog.DamageTakenCount() > 1)
+                                    {
+                                        <div>Fighting @combatLog.DamageTakenCount() Mobs</div>
+                                    }
+
+                                </div>
+                            </a>
+                        }
+                        else
+                        {
+                            <div>Kills: @botController.GoapAgent?.SessionStat.Kills</div>
+                        }
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        @if (ShowActiveGoal)
+        {
+            <table class="table table-sm table-striped">
+                @if (botController.GoapAgent != null && botController.GoapAgent.CurrentGoal != null)
+                {
+                    <GoapGoalView goal="botController.GoapAgent.CurrentGoal" IsSelected="true" />
+                }
+            </table>
+        }
+    </CardBody>
+</Card>
+
+@code {
+
+    [Parameter]
+    public bool Hide { get; set; } = false;
+
+    [Parameter]
+    public bool ShowActiveGoal { get; set; } = true;
+
+    private bool PlayerInCombat => Bits.Combat();
+
+    private BadgeColor CombatBadge()
+    {
+        return !PlayerInCombat ? BadgeColor.Success : BadgeColor.Danger;
+    }
+
+    protected override void OnInitialized()
+    {
+        addonReader.AddonDataChanged += OnAddonDataChanged;
+    }
+
+    public void Dispose()
+    {
+        addonReader.AddonDataChanged -= OnAddonDataChanged;
+    }
+
+    private void OnAddonDataChanged()
+    {
+        base.InvokeAsync(StateHasChanged);
+    }
+
+    private string DisplayTimeToLevel()
+    {
+        return levelTracker.TimeToLevel == TimeSpan.Zero
+            ? "∞"
+            : levelTracker.TimeToLevel.ToString();
+    }
+}

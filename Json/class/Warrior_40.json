@@ -1,0 +1,235 @@
+{
+  "ClassName": "Warrior",
+  "PathFilename": "_pack\\40-50\\The Hinterlands\\41-42 wolves.json",
+  "NPCMaxLevels_Above": 3,
+  "NPCMaxLevels_Below": 10,
+  "PathThereAndBack": false,
+  "PathReduceSteps": true,
+  "Mount": { "Key": "N0"},
+  "IntVariables": {
+    "CD_MIN_TARGET_HP%": 70,
+    "MIN_RAGE_HEROIC_STRIKE": 42
+  },
+  "Form": {
+    "Sequence": [
+      {
+        "Name": "Battle Stance",
+        "Key": "F1",
+        "Form": "Warrior_BattleStance"
+      },
+      {
+        "Name": "Defensive Stance",
+        "Key": "F2",
+        "Form": "Warrior_DefensiveStance"
+      },
+      {
+        "Name": "Berserker Stance",
+        "Key": "F3",
+        "Form": "Warrior_BerserkerStance"
+      }
+    ]
+  },
+  "Pull": {
+    "Sequence": [
+      {
+        "Name": "Shoot",
+        "Key": "9",
+        "Item": true,
+        "WhenUsable": true,
+        "AfterCastWaitMeleeRange": true,
+        "Requirements": [
+          "AddVisible",
+          "HasRangedWeapon && !Items Broken",
+          "!InMeleeRange && (SpellInRange:2 || SpellInRange:3)"
+        ]
+      },
+      {
+        "Name": "Charge",
+        "Key": "3",
+        "WhenUsable": true,
+        "Requirement": "SpellInRange:0 && !InMeleeRange",
+        "Form": "Warrior_BattleStance",
+        "AfterCastWaitMeleeRange": true
+      },
+      {
+        "Name": "Approach",
+        "Requirements": [
+          "CD_Charge > 0"
+        ]
+      }
+    ]
+  },
+  "Combat": {
+    "Sequence": [
+      {
+        "Name": "Retaliation",
+        "Key": "N1",
+        "WhenUsable": true,
+        "Requirement": "MobCount > 1",
+        "Form": "Warrior_BattleStance"
+      },
+      {
+        "Name": "Bloodrage",
+        "Key": "8",
+        "WhenUsable": true,
+        "Requirement": "Health% > 50 && Rage < Cost_Mortal Strike"
+      },
+      {
+        "Name": "Berserker Rage",
+        "Key": "5",
+        "WhenUsable": true,
+        "Requirement": "Form:Warrior_BerserkerStance && Rage < Cost_Mortal Strike"
+      },
+      {
+        "Name": "Death Wish",
+        "Key": "F5",
+        "WhenUsable": true,
+        "Requirement": "TargetHealth% > CD_MIN_TARGET_HP% && TargetHealth% < 95"
+      },
+      {
+        "Name": "Thunder Clap",
+        "Key": "6",
+        "WhenUsable": true,
+        "Cooldown": 16000,
+        "Requirements": [
+          "!Thunder Clap",
+          "Form:Warrior_BattleStance && MobCount > 1"
+        ]
+      },
+      {
+        "Name": "Overpower",
+        "Key": "0",
+        "WhenUsable": true,
+        "Cooldown": 5000,
+        "Requirements": [
+          "LastTargetDodgeMs > 0 && LastTargetDodgeMs < 5000"
+        ],
+        "Form": "Warrior_BattleStance"
+      },
+      {
+        "Name": "Execute",
+        "Key": "7",
+        "WhenUsable": true
+      },
+      {
+        "Name": "Cleave",
+        "Key": "1",
+        "WhenUsable": true,
+        "Requirements": [
+          "MainHandSwing > -400",
+          "MobCount > 1"
+        ],
+        "AfterCastWaitSwing": true
+      },
+      {
+        "Name": "Mortal Strike",
+        "Key": "N2",
+        "WhenUsable": true,
+        "Requirements": [
+          "MainHandSwing < -400",
+          "MobCount < 2",
+          "TargetHealth% > 20"
+        ]
+      },
+      {
+        "Name": "Heroic Strike",
+        "Key": "2",
+        "WhenUsable": true,
+        "Requirements": [
+          "MainHandSwing > -400",
+          "MobCount < 2",
+          "TargetHealth% > 20",
+          "Rage >= MIN_RAGE_HEROIC_STRIKE"
+        ],
+        "AfterCastWaitSwing": true
+      },
+      {
+        "Name": "Rend",
+        "Key": "5",
+        "WhenUsable": true,
+        "Requirements": [
+          "!Rend",
+          "TargetHealth% > 50",
+          "Form:Warrior_BattleStance"
+        ]
+      },
+      {
+        "Name": "Berserker Stance",
+        "Key": "F3",
+        "WhenUsable": true,
+        "Requirements": [
+          "Rend",
+          "MobCount < 2",
+          "Rage <= 5",
+          "Form:Warrior_BattleStance"
+        ]
+      },
+      {
+        "Name": "Battle Stance",
+        "Key": "F1",
+        "WhenUsable": true,
+        "Requirements": [
+          "MobCount > 1",
+          "Rage <= 5",
+          "Form:Warrior_BerserkerStance"
+        ]
+      },
+      {
+        "Name": "AutoAttack"
+      },
+      {
+        "Name": "Approach",
+        "Log": false
+      }
+    ]
+  },
+  "Adhoc": {
+    "Sequence": [
+      {
+        "Cost": 3.1,
+        "Name": "Battle Shout",
+        "Key": "4",
+        "InCombat": "i dont care",
+        "WhenUsable": true,
+        "Requirement": "!Battle Shout"
+      },
+      {
+        "Name": "Food",
+        "Key": "=",
+        "Requirement": "Health% < 60",
+        "Cost": 3
+      },
+      {
+        "Cost": 18,
+        "Name": "sharpen",
+        "Key": "F4",
+        "WhenUsable": true,
+        "HasCastbar": true,
+        "Requirement": "!HasMainHandEnchant",
+        "AfterCastWaitCastbar": true,
+        "AfterCastAuraExpected": true
+      }
+    ]
+  },
+  "NPC": {
+    "Sequence": [
+      {
+        "Name": "Repair",
+        "Key": "C",
+        "Requirement": "Durability% < 35",
+        "PathFilename": "23_Duskwood_Vendor.json",
+        "Cost": 6
+      },
+      {
+        "Name": "Sell",
+        "Key": "C",
+        "Requirements": [
+          "BagFull",
+          "BagGreyItem"
+        ],
+        "PathFilename": "23_Duskwood_Vendor.json",
+        "Cost": 6
+      }
+    ]
+  }
+}

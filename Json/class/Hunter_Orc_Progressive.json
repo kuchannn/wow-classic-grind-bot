@@ -1,0 +1,558 @@
+{
+  "ClassName": "Hunter",
+  "Wait": {
+    "Sequence": [
+      {
+        "Cost": 0.9,
+        "Name": "User",
+        "Requirement": "MenuOpen || ChatInputVisible"
+      }
+    ]
+  },
+  "Paths": [
+    {
+      "PathFilename": "_pack\\1-20\\Troll.Orc\\01-04_Durotar_Valley of Trials.json",
+      "PathThereAndBack": false,
+      "PathReduceSteps": false,
+      "Requirements": [
+        "Level < 4"
+      ]
+    },
+    {
+      "PathFilename": "_pack\\1-20\\Troll.Orc\\05-07_Durotar_Road.json",
+      "PathThereAndBack": true,
+      "PathReduceSteps": false,
+      "Requirements": [
+        "Level >= 4",
+        "Level < 6"
+      ]
+    },
+    {
+      "PathFilename": "_pack\\1-20\\Troll.Orc\\05-08_Durotar_big.json",
+      "PathThereAndBack": false,
+      "PathReduceSteps": false,
+      "Requirements": [
+        "Level >= 5",
+        "Level < 8"
+      ]
+    },
+    {
+      "PathFilename": "_pack\\1-20\\Troll.Orc\\06-08_Durotar_Razorhill.json",
+      "PathThereAndBack": false,
+      "PathReduceSteps": false,
+      "Requirements": [
+        "Level >= 6",
+        "Level < 8"
+      ]
+    },
+    {
+      "PathFilename": "_pack\\1-20\\Troll.Orc\\06-08_Durotar_big.json",
+      "PathThereAndBack": false,
+      "PathReduceSteps": false,
+      "Requirements": [
+        "Level >= 6",
+        "Level < 8"
+      ]
+    },
+    {
+      "PathFilename": "_pack\\1-20\\Troll.Orc\\06-08_Durotar_start.json",
+      "PathThereAndBack": false,
+      "PathReduceSteps": false,
+      "Requirements": [
+        "Level >= 6",
+        "Level < 8"
+      ]
+    },
+    {
+      "PathFilename": "_pack\\1-20\\Troll.Orc\\07-09_Durotar_Razorwind.json",
+      "PathThereAndBack": false,
+      "PathReduceSteps": false,
+      "Requirements": [
+        "Level >= 7",
+        "Level < 9"
+      ]
+    },
+    {
+      "PathFilename": "_pack\\1-20\\Troll.Orc\\07-10_Durotar.json",
+      "PathThereAndBack": false,
+      "PathReduceSteps": false,
+      "Requirements": [
+        "Level >= 7",
+        "Level < 10"
+      ]
+    },
+    {
+      "PathFilename": "_pack\\1-20\\Troll.Orc\\08-09_Durotar_Razormane Q-Encroachment (cl 11-12).json",
+      "PathThereAndBack": true,
+      "PathReduceSteps": false,
+      "Requirements": [
+        "Level >= 8",
+        "Level < 10"
+      ]
+    },
+    {
+      "PathFilename": "_pack\\1-20\\Troll.Orc\\09-12_Durotar_SouthFury River.json",
+      "PathThereAndBack": false,
+      "PathReduceSteps": false,
+      "Requirements": [
+        "Level >= 9",
+        "Level < 12"
+      ]
+    },
+    {
+      "PathFilename": "_pack\\1-20\\Troll.Orc\\09-14_Durotar_Thunder Ridge.json",
+      "PathThereAndBack": false,
+      "PathReduceSteps": false,
+      "Requirements": [
+        "Level >= 9",
+        "Level < 14"
+      ]
+    },
+    {
+      "PathFilename": "_pack\\1-20\\Troll.Orc\\09-16_The Barrens_Crossroads.json",
+      "PathThereAndBack": false,
+      "PathReduceSteps": false,
+      "Requirements": [
+        "Level >= 9",
+        "Level < 16"
+      ]
+    },
+    {
+      "PathFilename": "_pack\\1-20\\Troll.Orc\\10-14_The Barrens.json",
+      "PathThereAndBack": false,
+      "PathReduceSteps": false,
+      "Requirements": [
+        "Level >= 10",
+        "Level < 14"
+      ]
+    },
+    {
+      "PathFilename": "_pack\\1-20\\Troll.Orc\\10-12_The Barrens_Crossroads Circle.json",
+      "PathThereAndBack": true,
+      "PathReduceSteps": false,
+      "Requirements": [
+        "Level >= 10",
+        "Level < 12"
+      ]
+    },
+    {
+      "PathFilename": "_pack\\1-20\\Troll.Orc\\11-17_The Barrens_Savanna.json",
+      "PathThereAndBack": false,
+      "PathReduceSteps": false,
+      "Requirements": [
+        "Level >= 11",
+        "Level < 17"
+      ]
+    },
+    {
+      "PathFilename": "_pack\\1-20\\Troll.Orc\\12-14_The Barrens_Crossroads Circle.json",
+      "PathThereAndBack": true,
+      "PathReduceSteps": false,
+      "Requirements": [
+        "Level >= 12",
+        "Level < 14"
+      ]
+    },
+    {
+      "PathFilename": "_pack\\1-20\\Troll.Orc\\14-15_The Barrens_Savanna.json",
+      "PathThereAndBack": false,
+      "PathReduceSteps": false,
+      "Requirements": [
+        "Level >= 14",
+        "Level < 16"
+      ]
+    },
+    {
+      "PathFilename": "_pack\\1-20\\Troll.Orc\\14-17_The Barrens_The Merchant Coast.json",
+      "PathThereAndBack": false,
+      "PathReduceSteps": false,
+      "Requirements": [
+        "Level >= 14",
+        "Level < 17"
+      ]
+    },
+    {
+      "PathFilename": "_pack\\1-20\\Troll.Orc\\14-18_The Barrens.json",
+      "PathThereAndBack": false,
+      "PathReduceSteps": false,
+      "Requirements": [
+        "Level >= 14",
+        "Level < 18"
+      ]
+    },
+    {
+      "PathFilename": "_pack\\1-20\\Troll.Orc\\14-19_The Barrens_northern big.json",
+      "PathThereAndBack": false,
+      "PathReduceSteps": false,
+      "Requirements": [
+        "Level >= 14",
+        "Level < 19"
+      ]
+    },
+    {
+      "PathFilename": "_pack\\1-20\\Troll.Orc\\15-18_The Barrens_North.json",
+      "PathThereAndBack": false,
+      "PathReduceSteps": false,
+      "Requirements": [
+        "Level >= 15",
+        "Level < 18"
+      ]
+    },
+    {
+      "PathFilename": "_pack\\1-20\\Troll.Orc\\15-18_The Barrens_South Huge.json",
+      "PathThereAndBack": false,
+      "PathReduceSteps": false,
+      "Requirements": [
+        "Level >= 15",
+        "Level < 18"
+      ]
+    },
+    {
+      "PathFilename": "_pack\\1-20\\Troll.Orc\\17-20_The Barrens_South.json",
+      "PathThereAndBack": false,
+      "PathReduceSteps": false,
+      "Requirements": [
+        "Level >= 17",
+        "Level < 20"
+      ]
+    },
+    {
+      "PathFilename": "_pack\\1-20\\Troll.Orc\\17-23_The Barrens_Agama'gor.json",
+      "PathThereAndBack": false,
+      "PathReduceSteps": false,
+      "Requirements": [
+        "Level >= 17",
+        "Level < 23"
+      ]
+    },
+    {
+      "PathFilename": "_pack\\1-20\\Troll.Orc\\18-21_The Barrens_Camp Taurajo.json",
+      "PathThereAndBack": false,
+      "PathReduceSteps": false,
+      "Requirements": [
+        "Level >= 18",
+        "Level < 21"
+      ]
+    },
+    {
+      "PathFilename": "_pack\\1-20\\Troll.Orc\\19-23_The Barrens.json",
+      "PathThereAndBack": false,
+      "PathReduceSteps": false
+    }
+  ],
+  "Pull": {
+    "Sequence": [
+      {
+        "Name": "Serpent Sting",
+        "Key": "2",
+        "BeforeCastStop": true,
+        "AfterCastAuraExpected": true,
+        "Requirements": [
+          "Level >= 4",
+          "HasRangedWeapon",
+          "HasAmmo",
+          "!InMeleeRange",
+          "!Serpent Sting"
+        ]
+      },
+      {
+        "Name": "Auto Shot",
+        "Key": "3",
+        "BeforeCastStop": true,
+        "AfterCastWaitCombat": true,
+        "Item": true,
+        "Requirements": [
+          "HasRangedWeapon",
+          "!InMeleeRange",
+          "!AutoShot",
+          "HasAmmo"
+        ]
+      }
+    ]
+  },
+  "Combat": {
+    "Sequence": [
+      {
+        "Name": "Mend Pet",
+        "Key": "N7",
+        "Cooldown": 15000,
+        "WhenUsable": true,
+        "Requirements": [
+          "Level >= 10",
+          "Has Pet",
+          "PetHealth% < 40"
+        ]
+      },
+      {
+        "Name": "Serpent Sting",
+        "Key": "2",
+        "BeforeCastStop": true,
+        "Requirements": [
+          "Level >= 4",
+          "HasRangedWeapon",
+          "HasAmmo",
+          "!InMeleeRange",
+          "!Serpent Sting"
+        ]
+      },
+      {
+        "Name": "Auto Shot",
+        "Key": "3",
+        "Item": true,
+        "BeforeCastStop": true,
+        "Requirements": [
+          "HasRangedWeapon",
+          "!InMeleeRange",
+          "!AutoShot",
+          "HasAmmo"
+        ]
+      },
+      {
+        "Name": "Arcane Shot",
+        "Key": "8",
+        "Cooldown": 6000,
+        "WhenUsable": true,
+        "Requirements": [
+          "Level >= 6",
+          "HasRangedWeapon",
+          "HasAmmo",
+          "!InMeleeRange",
+          "!Rapid Fire",
+          "!Quick Shots",
+          "TargetHealth% > 60"
+        ]
+      },
+      {
+        "Name": "Stepback",
+        "Key": "S",
+        "PressDuration": 3000,
+        "BaseAction": true,
+        "Requirements": [
+          "TargetsMe",
+          "LastAutoShotMs < 400",
+          "!InMeleeRange",
+          "AutoShot"
+        ],
+        "Interrupt": "RangedSwing < -500 && TargetAlive"
+      },
+      {
+        "Name": "Raptor Strike",
+        "Key": "4",
+        "WhenUsable": true,
+        "AfterCastWaitSwing": true,
+        "Requirements": [
+          "MainHandSwing > -400",
+          "InMeleeRange",
+          "!AutoShot"
+        ]
+      },
+      {
+        "Name": "AutoAttack",
+        "Requirements": [
+          "InMeleeRange"
+        ]
+      },
+      {
+        "Name": "Approach",
+        "Log": false,
+        "Requirements": [
+          "InMeleeRange"
+        ]
+      }
+    ]
+  },
+  "Adhoc": {
+    "Sequence": [
+      {
+        "Name": "Aspect of the Monkey",
+        "Key": "5",
+        "Requirements": [
+          "Level >= 4",
+          "Level < 10",
+          "!Aspect of the Monkey"
+        ]
+      },
+      {
+        "Name": "Aspect of the Hawk",
+        "Key": "5",
+        "Requirements": [
+          "Level >= 10",
+          "!Aspect of the Hawk"
+        ]
+      },
+      {
+        "Name": "feedpet",
+        "Key": "N5",
+        "WhenUsable": true,
+        "Cooldown": 20000,
+        "Requirements": [
+          "Level >= 10",
+          "Has Pet",
+          "!Pet Happy"
+        ]
+      },
+      {
+        "Name": "sumpet",
+        "Key": "N6",
+        "HasCastBar": true,
+        "Cooldown": 4000,
+        "Requirements": [
+          "Level >= 10",
+          "Spell:Call Pet",
+          "!Has Pet"
+        ]
+      }
+    ]
+  },
+  "Parallel": {
+    "Sequence": [
+      {
+        "Name": "Food",
+        "Key": "6",
+        "Requirements": [
+          "Level < 6",
+          "Health% < 30"
+        ]
+      },
+      {
+        "Name": "Food",
+        "Key": "6",
+        "Requirements": [
+          "Level >= 6",
+          "Health% < 60"
+        ]
+      },
+      {
+        "Name": "Drink",
+        "Key": "7",
+        "Requirements": [
+          "Level < 6",
+          "Mana% < 30"
+        ]
+      },
+      {
+        "Name": "Drink",
+        "Key": "7",
+        "Requirements": [
+          "Level >= 6",
+          "Mana% < 60"
+        ]
+      }
+    ]
+  },
+  "NPC": {
+    "Sequence": [
+      {
+        "Cost": 6,
+        "Name": "Repair",
+        "Key": "C",
+        "Requirement": "Durability% < 35",
+        "PathFilename": "1_Valley_Trials_Repair.json",
+        "Requirements": [
+          "Level < 5"
+        ]
+      },
+      {
+        "Cost": 6,
+        "Name": "Repair",
+        "Key": "C",
+        "Requirement": "Durability% < 35",
+        "PathFilename": "1_Orc_Repair.json",
+        "Requirements": [
+          "Level >= 5",
+          "Level < 10"
+        ]
+      },
+      {
+        "Cost": 6,
+        "Name": "Repair",
+        "Key": "C",
+        "Requirement": "Durability% < 35",
+        "PathFilename": "10_Crossroads_Repair.json",
+        "Requirements": [
+          "Level >= 10",
+          "Level < 15"
+        ]
+      },
+      {
+        "Cost": 6,
+        "Name": "Repair",
+        "Key": "C",
+        "Requirement": "Durability% < 35",
+        "PathFilename": "15_Ratchet_Repair.json",
+        "Requirements": [
+          "Level >= 15",
+          "Level < 18"
+        ]
+      },
+      {
+        "Cost": 6,
+        "Name": "Repair",
+        "Key": "C",
+        "Requirement": "Durability% < 35",
+        "PathFilename": "18_Camp_Taurajo_Repair.json",
+        "Requirements": [
+          "Level >= 18"
+        ]
+      },
+      {
+        "Cost": 6,
+        "Name": "Sell",
+        "Key": "C",
+        "Requirements": [
+          "BagFull",
+          "BagGreyItem",
+          "Level < 5"
+        ],
+        "PathFilename": "1_Valley_Trials_Vendor.json"
+      },
+      {
+        "Cost": 6,
+        "Name": "Sell",
+        "Key": "C",
+        "Requirements": [
+          "BagFull",
+          "BagGreyItem",
+          "Level >= 5",
+          "Level < 10"
+        ],
+        "PathFilename": "1_Orc_Vendor.json"
+      },
+      {
+        "Cost": 6,
+        "Name": "Sell",
+        "Key": "C",
+        "Requirements": [
+          "BagFull",
+          "BagGreyItem",
+          "Level >= 10",
+          "Level < 15"
+        ],
+        "PathFilename": "10_Crossroads_Vendor.json"
+      },
+      {
+        "Cost": 6,
+        "Name": "Sell",
+        "Key": "C",
+        "Requirements": [
+          "BagFull",
+          "BagGreyItem",
+          "Level >= 15",
+          "Level < 18"
+        ],
+        "PathFilename": "15_Ratchet_Vendor.json"
+      },
+      {
+        "Cost": 6,
+        "Name": "Sell",
+        "Key": "C",
+        "Requirements": [
+          "BagFull",
+          "BagGreyItem",
+          "Level >= 18"
+        ],
+        "PathFilename": "18_Camp_Taurajo_Vendor.json"
+      }
+    ]
+  }
+} 

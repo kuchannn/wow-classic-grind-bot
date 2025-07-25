@@ -1,0 +1,151 @@
+{
+  "ClassName": "Warlock",
+  "Loot": true,
+  "NPCMaxLevels_Below": 5,
+  "PathFilename": "5_Gnome.json",
+  "PathThereAndBack": false,
+  "PathReduceSteps": true,
+  "IntVariables": {
+    "DOT_MIN_HEALTH%": 35,
+    "Item_Soul_Shard": 6265
+  },
+  "Pull": {
+    "Sequence": [
+      {
+        "Name": "Immolate",
+        "Key": "5",
+        "HasCastBar": true
+      }
+    ]
+  },
+  "Combat": {
+    "Sequence": [
+      {
+        "Name": "Drain Soul",
+        "Key": "9",
+        "HasCastBar": true,
+        "Requirements": [
+          "TargetHealth% < 25",
+          "!BagItem:Item_Soul_Shard:3",
+          "TargetYieldXP"
+        ]
+      },
+      {
+        "Name": "Immolate",
+        "Key": "5",
+        "HasCastBar": true,
+        "Requirements": [
+          "TargetHealth% > DOT_MIN_HEALTH%",
+          "!Immolate"
+        ]
+      },
+      {
+        "Name": "Curse of Agony",
+        "Key": "1",
+        "Requirements": [
+          "TargetHealth% > DOT_MIN_HEALTH%",
+          "!Curse of Agony"
+        ]
+      },
+      {
+        "Name": "Corruption",
+        "Key": "7",
+        "HasCastBar": true,
+        "Requirements": [
+          "TargetHealth% > DOT_MIN_HEALTH%",
+          "!Corruption"
+        ]
+      },
+      {
+        "Name": "Shadow Bolt",
+        "Key": "2",
+        "HasCastBar": true,
+        "Requirements": [
+          "TargetHealth% > DOT_MIN_HEALTH%",
+          "!TargetsMe"
+        ],
+        "Cooldown": 8000
+      },
+      {
+        "Name": "Shoot",
+        "Key": "0",
+        "Item": true,
+        "Requirements": [
+          "HasRangedWeapon",
+          "!Shooting",
+          "SpellInRange:1"
+        ]
+      },
+      {
+        "Name": "AutoAttack",
+        "Requirements": [
+          "!HasRangedWeapon"
+        ]
+      }
+    ]
+  },
+  "Parallel": {
+    "Sequence": [
+      {
+        "Name": "Food",
+        "Key": "=",
+        "Requirement": "Health% < 50"
+      },
+      {
+        "Name": "Drink",
+        "Key": "-",
+        "Requirement": "Mana% < 40"
+      }
+    ]
+  },
+  "Adhoc": {
+    "Sequence": [
+      {
+        "Name": "Demon Skin",
+        "Key": "3",
+        "Requirement": "!Demon Skin"
+      },
+      {
+        "Name": "Summon Voidwalker",
+        "Key": "4",
+        "HasCastBar": true,
+        "Requirements": [
+          "BagItem:Item_Soul_Shard",
+          "!Has Pet"
+        ],
+        "AfterCastWaitCastbar": true,
+        "AfterCastAuraExpected": true
+      },
+      {
+        "Name": "Life Tap",
+        "Key": "8",
+        "Charge": 2,
+        "Requirements": [
+          "Health% > 70",
+          "Mana% < 60"
+        ]
+      }
+    ]
+  },
+  "NPC": {
+    "Sequence": [
+      {
+        "Name": "Repair",
+        "Key": "C",
+        "Requirement": "Durability% < 35",
+        "PathFilename": "5_Gnome_Vendor.json",
+        "Cost": 6
+      },
+      {
+        "Name": "Sell",
+        "Key": "C",
+        "Requirements": [
+          "BagFull",
+          "BagGreyItem"
+        ],
+        "PathFilename": "5_Gnome_Vendor.json",
+        "Cost": 6
+      }
+    ]
+  }
+}

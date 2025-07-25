@@ -1,0 +1,159 @@
+{
+  "ClassName": "Paladin",
+  "PathFilename": "\\_pack\\1-20\\Human\\15-18_Westfall_The Dagger Hills (defias).json",
+  "Pull": {
+    "Sequence": [
+      {
+        "Name": "Seal of the Crusader",
+        "Key": "6",
+        "WhenUsable": true,
+        "Requirements": [
+          "!Seal of the Crusader",
+          "!Judgement of the Crusader",
+          "CD_Judgement <= 1500"
+        ]
+      },
+      {
+        "Name": "Judgement",
+        "Key": "1",
+        "WhenUsable": true,
+        "Requirements": [
+          "SpellInRange:0",
+          "Seal of the Crusader",
+          "!Judgement of the Crusader"
+        ]
+      }
+    ]
+  },
+  "Combat": {
+    "Sequence": [
+      {
+        "Name": "Divine Protection",
+        "Key": "N1",
+        "WhenUsable": true,
+        "Requirements": [
+          "Health% < 20",
+          "!Blessing of Protection"
+        ]
+      },
+      {
+        "Name": "Blessing of Protection",
+        "Key": "N2",
+        "WhenUsable": true,
+        "Requirements": [
+          "Health% < 20",
+          "!Divine Protection"
+        ]
+      },
+      {
+        "Name": "Lay on Hands",
+        "Key": "N3",
+        "WhenUsable": true,
+        "Requirements": [
+          "Health% < 20",
+          "!Blessing of Protection && CD_Blessing of Protection > 0",
+          "!Divine Protection && CD_Divine Protection > 0"
+        ]
+      },
+      {
+        "Name": "Holy Light",
+        "Key": "3",
+        "HasCastBar": true,
+        "WhenUsable": true,
+        "Requirements": [
+          "(Blessing of Protection || Divine Protection && Health% < 60) || (!Blessing of Protection && CD_Blessing of Protection > 0 && !Divine Protection && CD_Divine Protection > 0 && Health% < 50 && TargetHealth%>20 && LastMainHandMs <= 1000)"
+        ]
+      },
+      {
+        "Name": "Judgement",
+        "Key": "1",
+        "WhenUsable": true
+      },
+      {
+        "Name": "Hammer of Justice",
+        "Key": "7",
+        "WhenUsable": true,
+        "Requirement": "TargetCastingSpell || TargetHealth% < 50"
+      },
+      {
+        "Name": "Seal of the Crusader",
+        "Key": "6",
+        "Requirements": [
+          "!Seal of the Crusader",
+          "!Judgement of the Crusader",
+          "TargetHealth% > 20"
+        ]
+      },
+      {
+        "Name": "Seal of Righteousness",
+        "Key": "2",
+        "Requirements": [
+          "Judgement of the Crusader",
+          "!Seal of Righteousness",
+          "TargetHealth% > 20"
+        ]
+      },
+      {
+        "Name": "AutoAttack",
+        "Requirements": [
+          "!Divine Protection",
+          "!Blessing of Protection"
+        ]
+      },
+      {
+        "Name": "Approach",
+        "Log": false
+      }
+    ]
+  },
+  "Adhoc": {
+    "Sequence": [
+      {
+        "Name": "Retribution Aura",
+        "Key": "5",
+        "Requirement": "!Form:Paladin_Retribution_Aura",
+        "AfterCastAuraExpected": true
+      },
+      {
+        "Name": "Blessing of Might",
+        "Key": "4",
+        "Requirement": "!Blessing of Might"
+      }
+    ]
+  },
+  "Parallel": {
+    "Sequence": [
+      {
+        "Name": "Drink",
+        "Key": "-",
+        "Requirement": "Mana% < 50"
+      },
+      {
+        "Name": "Food",
+        "Key": "=",
+        "Requirement": "Health% < 50"
+      }
+    ]
+  },
+  "NPC": {
+    "Sequence": [
+      {
+        "Name": "Repair",
+        "Key": "C",
+        "Requirement": "Durability% < 35",
+        "PathFilename": "20_Westfall_Vendor.json",
+        "Cost": 6
+      },
+      {
+        "Name": "Sell",
+        "Key": "C",
+        "Requirements": [
+          "BagFull",
+          "BagGreyItem"
+        ],
+        "PathFilename": "20_Westfall_Vendor.json",
+        "Cost": 6
+      }
+    ]
+  }
+}

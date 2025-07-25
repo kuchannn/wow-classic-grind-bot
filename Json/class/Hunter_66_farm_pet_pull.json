@@ -1,0 +1,277 @@
+{
+  "ClassName": "Hunter",
+  //"Skin": true,
+  //"Herb": true,
+  "UseMount": true,
+  //"Mode": "AttendedGrind",
+  "PathThereAndBack": false,
+  "PathReduceSteps": false,
+  "NPCMaxLevels_Above": 2,
+  "NPCMaxLevels_Below": 22,
+  "Mount": { "Key": "N0"},
+  //"PathFileName": "_pack\\60-70\\Zangarmarsh\\60-64 Dead mire.json",
+  //"PathFilename": "_pack\\60-70\\Terokkar Forest\\62-64.json",
+  "PathFilename": "_pack\\60-70\\Terokkar Forest\\70-Terokkar Forest_Barrier_Hill.json",
+  "IntVariables": {
+    "MIN_MANA_VIPER%": 40,
+    "MIN_MANA_HAWK%": 70,
+    "MIN_TARGET_HP_CD%": 75,
+    "USE_TRINKET_1": 1,
+    "USE_TRINKET_2": 0
+  },
+  "Pull": {
+    "Sequence": [
+      {
+        "Name": "Approach",
+        "Requirements": [
+          "Has Pet",
+          "MinRange > 20"
+        ]
+      }
+    ]
+  },
+  "Combat": {
+    "Sequence": [
+      {
+        "Name": "Gift of the Naaru",
+        "Key": "1",
+        "HasCastBar": true,
+        "WhenUsable": true,
+        "Requirements": [
+          "Race:Draenei",
+          "Health% < 45"
+        ]
+      },
+      {
+        "Name": "Mend Pet",
+        "Key": "N7",
+        "Cooldown": 15000,
+        "Requirements": [
+          "Has Pet",
+          "PetHealth% < 50"
+        ]
+      },
+      {
+        "Name": "Intimidation",
+        "Key": "N4",
+        "WhenUsable": true,
+        "Requirements": [
+          "Has Pet",
+          "Spell:Intimidation",
+          "(TargetHealth% < 95 && TargetsMe) || TargetCastingSpell"
+        ]
+      },
+      {
+        "Name": "Bestial Wrath",
+        "Key": "N2",
+        "BaseAction": true,
+        "Requirements": [
+          "Spell:Bestial Wrath",
+          "!InMeleeRange",
+          "HasRangedWeapon",
+          "HasAmmo",
+          "Has Pet",
+          "TargetHealth% > MIN_TARGET_HP_CD%",
+          "LastAutoShotMs < 500"
+        ]
+      },
+      {
+        "Name": "Trinket 1",
+        "Key": "F1",
+        "Item": true,
+        "BaseAction": true,
+        "Requirements": [
+          "USE_TRINKET_1 == 1",
+          "!InMeleeRange",
+          "HasRangedWeapon",
+          "HasAmmo",
+          "Has Pet",
+          "TargetHealth% > MIN_TARGET_HP_CD%",
+          "LastAutoShotMs < 500"
+        ]
+      },
+      {
+        "Name": "Trinket 2",
+        "Key": "F2",
+        "Item": true,
+        "BaseAction": true,
+        "Requirements": [
+          "USE_TRINKET_2 == 1",
+          "!InMeleeRange",
+          "HasRangedWeapon",
+          "HasAmmo",
+          "Has Pet",
+          "TargetHealth% > MIN_TARGET_HP_CD%",
+          "LastAutoShotMs < 500"
+        ]
+      },
+      {
+        "Name": "Rapid Fire",
+        "Key": "N3",
+        "BaseAction": true,
+        "Requirements": [
+          "!InMeleeRange",
+          "HasRangedWeapon",
+          "HasAmmo",
+          "TargetHealth% > MIN_TARGET_HP_CD%",
+          "LastAutoShotMs < 500"
+        ]
+      },
+      {
+        "Name": "Kill Command",
+        "Key": "N1",
+        "WhenUsable": true,
+        "Requirement": "Has Pet && TargetHealth% > 2"
+      },
+      {
+        "Name": "Auto Shot",
+        "Key": "0",
+        "Requirements": [
+          "!InMeleeRange",
+          "HasRangedWeapon && HasAmmo",
+          "!AutoShot"
+        ]
+      },
+      {
+        "Name": "Steady Shot",
+        "Key": "6",
+        "WhenUsable": true,
+        "HasCastBar": true,
+        "Charge": 2,
+        "Cooldown": 5000,
+        "Requirements": [
+          "!InMeleeRange",
+          "HasRangedWeapon",
+          "HasAmmo",
+          "LastAutoShotMs < 500",
+          "!Aspect of the Viper"
+        ]
+      },
+      {
+        "Name": "Serpent Sting (rank 1)",
+        "HasCastBar": true,
+        "WhenUsable": true,
+        "Cooldown": 15000,
+        "Key": "2",
+        "Requirements": [
+          "!InMeleeRange",
+          "HasRangedWeapon",
+          "!AutoShot",
+          "HasAmmo"
+        ]
+      },
+      {
+        "Name": "Disengage",
+        "Key": "N8",
+        "WhenUsable": true,
+        "Cooldown": 5000,
+        "AfterCastStepBack": -1,
+        "Requirements": [
+          "InMeleeRange",
+          "AutoAttacking",
+          "TargetsMe"
+        ]
+      },
+      {
+        "Name": "Raptor Strike",
+        "Key": "4",
+        "WhenUsable": true,
+        "Requirements": [
+          "InMeleeRange",
+          "MainHandSwing > -400",
+          "HasAmmo",
+          "!TargetsMe"
+        ],
+        "AfterCastWaitSwing": true,
+        "AfterCastStepBack": -1
+      },
+      {
+        "Name": "Raptor Strike",
+        "Key": "4",
+        "WhenUsable": true,
+        "Requirements": [
+          "InMeleeRange",
+          "MainHandSwing > -400",
+          "!HasAmmo"
+        ],
+        "AfterCastWaitSwing": true
+      },
+      {
+        "Name": "AutoAttack",
+        "Requirements": [
+          "InMeleeRange",
+          "!AutoShot"
+        ]
+      },
+      {
+        "Name": "Approach",
+        "Requirements": [
+          "TargetsMe && InMeleeRange",
+          "!HasAmmo"
+        ],
+        "Log": false
+      }
+    ]
+  },
+  "Adhoc": {
+    "Sequence": [
+      {
+        "Cost": 3.1,
+        "Name": "Aspect of the Viper",
+        "Key": "7",
+        "InCombat": "i dont care",
+        "Requirements": [
+          "!Mounted",
+          "!Aspect of the Viper",
+          "Mana% < MIN_MANA_VIPER%"
+        ]
+      },
+      {
+        "Cost": 3.2,
+        "Name": "Aspect of the Hawk",
+        "Key": "5",
+        "InCombat": "i dont care",
+        "Requirements": [
+          "!Mounted",
+          "!Aspect of the Hawk",
+          "Mana% > MIN_MANA_HAWK%"
+        ]
+      },
+      {
+        "Name": "feedpet",
+        "Key": "N5",
+        "WhenUsable": true,
+        "Cooldown": 20000,
+        "Requirements": [
+          "Has Pet",
+          "!Pet Happy",
+          "!Mounted"
+        ]
+      },
+      {
+        "Name": "sumpet",
+        "Key": "N6",
+        "HasCastBar": true,
+        "Cooldown": 4000,
+        "Requirements": [
+          "!Has Pet",
+          "!Mounted"
+        ]
+      }
+    ]
+  },
+  "Parallel": {
+    "Sequence": [
+      {
+        "Name": "Food",
+        "Key": "-",
+        "Requirement": "Health% < 40"
+      },
+      {
+        "Name": "Drink",
+        "Key": "=",
+        "Requirement": "Mana% < 10"
+      }
+    ]
+  }
+}

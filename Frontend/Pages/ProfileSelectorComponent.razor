@@ -1,0 +1,133 @@
+﻿@using System.IO
+
+@inject ILogger logger
+@inject IBotController botController
+
+@inject ILoggerFactory logFactory
+
+@inject BagReader bagReader
+@inject EquipmentReader equipmentReader
+
+@inject DataConfig dataConfig
+@inject ExecGameCommand exec
+
+@implements IDisposable
+
+<div class="card @(Hide ? "hide" : "")" style="margin-top: 10px">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <label>Class Profile</label>
+
+        <select name="listbox" style="width:60%" class="form-control" id="listbox" @onchange="OnListBoxChanged" runat="server">
+            @foreach (var item in Files)
+            {
+                <option value="@item" selected="@(Selected == @item ? "selected" : null)">
+                    @item
+                </option>
+            }
+        </select>
+
+        <button class="btn btn-sm btn-primary" @onclick="LoadClassProfile" disabled="@DisableLoadButton">
+            <span>Load Profile</span>
+        </button>
+
+        <button class="btn btn-sm btn-primary" @onclick="SyncActionBar" disabled="@(string.IsNullOrEmpty(botController.SelectedClassFilename) || ActionBarPopulator == null)">
+            <span>Sync Actionbar</span>
+        </button>
+    </div>
+</div>
+
+@code {
+
+    [Parameter]
+    public bool Hide { get; set; } = false;
+
+    private IEnumerable<string> Files { get; set; } = null!;
+
+    private string Selected { get; set; } = string.Empty;
+    private bool DisableLoadButton { get; set; } = true;
+
+    private FileSystemWatcher watcher = null!;
+
+    private ActionBarPopulator ActionBarPopulator { get; set; } = null!;
+
+    protected override void OnInitialized()
+    {
+        RefreshData();
+
+        watcher = new(dataConfig.Class);
+        watcher.NotifyFilter = NotifyFilters.Attributes
+            | NotifyFilters.CreationTime
+            | NotifyFilters.DirectoryName
+            | NotifyFilters.FileName
+            | NotifyFilters.LastAccess
+            | NotifyFilters.LastWrite
+            | NotifyFilters.Security
+            | NotifyFilters.Size;
+
+        watcher.Changed += OnChanged;
+        watcher.Created += OnChanged;
+        watcher.Deleted += OnChanged;
+        watcher.Renamed += OnChanged;
+
+        watcher.Filter = "*.json";
+        watcher.IncludeSubdirectories = true;
+        watcher.EnableRaisingEvents = true;
+    }
+
+    public void Dispose()
+    {
+        watcher.Dispose();
+    }
+
+    public void OnGet()
+    {
+        RefreshData();
+    }
+
+    private void OnChanged(object? sender, FileSystemEventArgs e)
+    {
+        RefreshData();
+        base.InvokeAsync(StateHasChanged);
+    }
+
+    private void LoadClassProfile()
+    {
+        if (string.IsNullOrEmpty(Selected))
+            return;
+
+        botController.LoadClassProfile(Selected);
+        CreateNewActionBarPopulator();
+    }
+
+    private void OnListBoxChanged(ChangeEventArgs changeEventArgs)
+    {
+        if (changeEventArgs.Value != null)
+        {
+            Selected = (string)changeEventArgs.Value;
+        }
+
+        DisableLoadButton = string.IsNullOrEmpty(Selected) || Selected == Files.First();
+    }
+
+    private void RefreshData()
+    {
+        Files = botController.ClassFiles();
+        Selected = botController.SelectedClassFilename;
+        DisableLoadButton = string.IsNullOrEmpty(Selected);
+
+        CreateNewActionBarPopulator();
+    }
+
+    private void SyncActionBar()
+    {
+        ActionBarPopulator.Execute();
+    }
+
+    private void CreateNewActionBarPopulator()
+    {
+        if (botController.ClassConfig != null)
+            ActionBarPopulator = new(
+                logFactory.CreateLogger<ActionBarPopulator>(),
+                botController.ClassConfig!, bagReader, equipmentReader, exec);
+    }
+}

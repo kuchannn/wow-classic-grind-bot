@@ -1,0 +1,131 @@
+{
+  "ClassName": "Shaman",
+  "Loot": true,
+  "Skin": false,
+  "PathFilename": "_pack\\50-60\\Azshara\\50 - 53 Southridge Beach (mermaids).json",
+  "PathThereAndBack": false,
+  "PathReduceSteps": true,
+  "NPCMaxLevels_Below": 7,
+  "NPCMaxLevels_Above": 2,
+  "Mount": { "Key": "N1"},
+  "Pull": {
+    "Sequence": []
+  },
+  "Combat": {
+    "Sequence": [
+      {
+        "Name": "Healing Wave",
+        "Key": "3",
+        "Requirements": [
+          "Health%<40",
+          "TargetHealth%>15"
+        ],
+        "Cooldown": 5000,
+        "HasCastBar": true,
+        "Log": false
+      },
+      {
+        "Name": "Shaman Ferry",
+        "Key": "F3",
+        "Requirement": "Mana%<50",
+        "Cooldown": 120000
+      },
+      {
+        "Name": "Stoneclaw Totem",
+        "Key": "F9",
+        "Requirement": "MobCount>1",
+        "Cooldown": 30000,
+        "Log": false
+      },
+      {
+        "Name": "Searing Totem",
+        "Key": "F7",
+        "Requirement": "MobCount>1",
+        "Cooldown": 20000,
+        "Log": false
+      },
+      {
+        "Name": "War Stomp",
+        "Key": "0",
+        "Requirements": [
+          "Race:Tauren",
+          "Health%<49"
+        ],
+        "WhenUsable": true
+      },
+      {
+        "Name": "Stormstrike",
+        "Key": "1",
+        "Requirements": [
+          "Mana%>45",
+          "InMeleeRange"
+        ],
+        "Log": false,
+        "Cooldown": 5000
+      },
+      {
+        "Name": "Fire shock",
+        "Key": "4",
+        "Requirements": [
+          "Mana%>40",
+          "TargetHealth%>10"
+        ],
+        "Log": false,
+        "WhenUsable": true
+      },
+      {
+        "Name": "AutoAttack"
+      },
+      {
+        "Name": "Approach",
+        "Log": false
+      }
+    ]
+  },
+  "Adhoc": {
+    "Sequence": [
+      {
+        "Name": "Windfury Weapon",
+        "Key": "5",
+        "Requirement": "!HasMainHandEnchant",
+        "AfterCastAuraExpected": true
+      },
+      {
+        "Name": "Windfury/Falme Weapon",
+        "Key": "5",
+        "Requirement": "!HasOffHandEnchant",
+        "AfterCastAuraExpected": true
+      },
+      {
+        "Name": "Lightning Shield",
+        "Key": "7",
+        "Requirement": "!Lightning Shield"
+      }
+    ]
+  },
+  "Parallel": {
+    "Sequence": [
+      {
+        "Name": "Healing Wave",
+        "HasCastBar": true,
+        "Key": "4",
+        "Requirements": [
+          "Health%<40",
+          "Mana%>65"
+        ],
+        "Cooldown": 3000,
+        "Cost": 6
+      },
+      {
+        "Name": "Drink",
+        "Key": "9",
+        "Requirement": "Mana%<45"
+      },
+      {
+        "Name": "Food",
+        "Key": "8",
+        "Requirement": "Health%<45"
+      }
+    ]
+  }
+}

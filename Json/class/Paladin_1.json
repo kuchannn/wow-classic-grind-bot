@@ -1,0 +1,49 @@
+{
+  "ClassName": "Paladin",
+  "PathFilename": "_pack\\1-20\\Draenei\\1-5_Azuremyst Isle.json",
+  "Wait": {
+    "Sequence": [
+      {
+        "Cost": 0.9,
+        "Name": "User",
+        "Requirement": "MenuOpen || ChatInputVisible"
+      }
+    ]
+  },
+  "Combat": {
+    "Sequence": [
+      {
+        "Name": "Seal of Righteousness",
+        "Key": "2",
+        "Requirement": "!Seal of Righteousness"
+      },
+      {
+        "Name": "AutoAttack"
+      },
+      {
+        "Name": "Approach",
+        "Log": false
+      }
+    ]
+  },
+  "Adhoc": {
+    "Sequence": [
+      {
+        "Name": "Holy Light",
+        "HasCastBar": true,
+        "Key": "3",
+        "Requirement": "Health%<50",
+        "Cooldown": 8000
+      },
+      {
+        "Name": "Devotion Aura",
+        "Key": "5",
+        "Requirements": [
+          "Spell:Devotion Aura",
+          "!Form:Paladin_Devotion_Aura"
+        ],
+        "AfterCastAuraExpected": true
+      }
+    ]
+  }
+}

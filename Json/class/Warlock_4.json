@@ -1,0 +1,109 @@
+{
+  "ClassName": "Warlock",
+  "Loot": true,
+  "NPCMaxLevels_Below": 4,
+  "PathFilename": "1_Gnome.json",
+  "PathThereAndBack": true,
+  "PathReduceSteps": false,
+  "IntVariables": {
+    "DOT_MIN_HEALTH%": 35
+  },
+  "Pull": {
+    "Sequence": [
+      {
+        "Name": "Immolate",
+        "Key": "5",
+        "HasCastBar": true
+      }
+    ]
+  },
+  "Combat": {
+    "Sequence": [
+      {
+        "Name": "Immolate",
+        "Key": "5",
+        "HasCastBar": true,
+        "Requirements": [
+          "TargetHealth% > DOT_MIN_HEALTH%",
+          "!Immolate"
+        ]
+      },
+      {
+        "Name": "Corruption",
+        "Key": "7",
+        "HasCastBar": true,
+        "Requirements": [
+          "TargetHealth% > DOT_MIN_HEALTH%",
+          "!Corruption"
+        ]
+      },
+      {
+        "Name": "Shadow Bolt",
+        "Key": "2",
+        "HasCastBar": true,
+        "Cooldown": 8000
+      },
+      {
+        "Name": "AutoAttack",
+        "Requirements": [
+          "!Casting"
+        ]
+      },
+      {
+        "Name": "Approach",
+        "Requirements": [
+          "!Casting",
+          "AutoAttacking"
+        ]
+      }
+    ]
+  },
+  "Adhoc": {
+    "Sequence": [
+      {
+        "Name": "Demon Skin",
+        "Key": "3",
+        "Requirement": "!Demon Skin"
+      },
+      {
+        "Name": "Summon Imp",
+        "Key": "4",
+        "HasCastBar": true,
+        "Requirement": "!Has Pet",
+        "AfterCastWaitCastbar": true,
+        "AfterCastAuraExpected": true
+      },
+      {
+        "Name": "Food",
+        "Key": "=",
+        "Requirement": "Health% < 50"
+      },
+      {
+        "Name": "Drink",
+        "Key": "-",
+        "Requirement": "Mana% < 50"
+      }
+    ]
+  },
+  "NPC": {
+    "Sequence": [
+      {
+        "Name": "Repair",
+        "Key": "C",
+        "Requirement": "Durability% < 35",
+        "PathFilename": "1_Gnome_Vendor.json",
+        "Cost": 6
+      },
+      {
+        "Name": "Sell",
+        "Key": "C",
+        "Requirements": [
+          "BagFull",
+          "BagGreyItem"
+        ],
+        "PathFilename": "1_Gnome_Vendor.json",
+        "Cost": 6
+      }
+    ]
+  }
+}

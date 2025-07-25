@@ -1,0 +1,163 @@
+{
+  "ClassName": "Hunter",
+  "PathFilename": "_pack\\1-20\\Draenei\\9-10_Azuremyst Isle.json",
+  "Pull": {
+    "Sequence": [
+      {
+        "Name": "Serpent Sting",
+        "Key": "2",
+        "BeforeCastStop": true,
+        "AfterCastWaitCombat": true,
+        "Requirements": [
+          "HasRangedWeapon",
+          "HasAmmo",
+          "!InMeleeRange"
+        ]
+      }
+    ]
+  },
+  "Combat": {
+    "Sequence": [
+      {
+        "Name": "Gift of the Naaru",
+        "Key": "1",
+        "HasCastBar": true,
+        "WhenUsable": true,
+        "Requirements": [
+          "Race:Draenei",
+          "Health% < 45"
+        ]
+      },
+      {
+        "Name": "Mend Pet",
+        "Key": "N7",
+        "Cooldown": 15000,
+        "WhenUsable": true,
+        "Requirements": [
+          "Has Pet",
+          "PetHealth% < 40"
+        ]
+      },
+      {
+        "Name": "Serpent Sting",
+        "Key": "2",
+        "BeforeCastStop": true,
+        "Requirements": [
+          "HasRangedWeapon",
+          "HasAmmo",
+          "!InMeleeRange",
+          "!Serpent Sting"
+        ]
+      },
+      {
+        "Name": "Auto Shot",
+        "Key": "3",
+        "Item": true,
+        "BeforeCastStop": true,
+        "Requirements": [
+          "HasRangedWeapon",
+          "HasAmmo",
+          "!InMeleeRange",
+          "!AutoShot"
+        ]
+      },
+      {
+        "Name": "Arcane Shot",
+        "Key": "8",
+        "Cooldown": 6000,
+        "WhenUsable": true,
+        "Requirements": [
+          "HasRangedWeapon",
+          "HasAmmo",
+          "!InMeleeRange",
+          "!Rapid Fire",
+          "!Quick Shots",
+          "TargetHealth% > 60"
+        ]
+      },
+      {
+        "Name": "Raptor Strike",
+        "Key": "4",
+        "WhenUsable": true,
+        "AfterCastWaitSwing": true,
+        "AfterCastStepBack": 1000,
+        "Requirements": [
+          "MainHandSwing > -400",
+          "InMeleeRange",
+          "!AutoShot"
+        ]
+      },
+      {
+        "Name": "AutoAttack",
+        "Requirements": [
+          "InMeleeRange",
+          "!AutoShot"
+        ]
+      }
+    ]
+  },
+  "Adhoc": {
+    "Sequence": [
+      {
+        "Name": "Aspect of the Hawk",
+        "Key": "5",
+        "Requirement": "!Aspect of the Hawk"
+      },
+      {
+        "Name": "feedpet",
+        "Key": "N5",
+        "WhenUsable": true,
+        "Cooldown": 20000,
+        "Requirements": [
+          "Has Pet",
+          "!Pet Happy"
+        ]
+      },
+      {
+        "Name": "sumpet",
+        "Key": "N6",
+        "HasCastBar": true,
+        "Cooldown": 4000,
+        "Requirements": [
+          "Spell:Call Pet",
+          "!Has Pet"
+        ]
+      }
+    ]
+  },
+  "Parallel": {
+    "Sequence": [
+      {
+        "Name": "Food",
+        "Key": "6",
+        "Requirement": "Health% < 40"
+      },
+      {
+        "Name": "Drink",
+        "Key": "7",
+        "Requirement": "Mana% < 40"
+      }
+    ]
+  },
+  "NPC": {
+    "Sequence": [
+      {
+        "Name": "Repair",
+        "Key": "C",
+        "Requirement": "Durability% < 35",
+        "PathFilename": "5_Draenai_Vendor.json",
+        "Cost": 6
+      },
+      {
+        "Name": "Sell",
+        "Key": "C",
+        "Requirements": [
+          "BagFull",
+          "BagGreyItem"
+        ],
+        "PathFilename": "5_Draenai_Vendor.json",
+        "Cost": 6
+      }
+    ]
+  }
+}

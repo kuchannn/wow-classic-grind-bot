@@ -1,0 +1,192 @@
+﻿@using System.IO
+
+@inject IBotController botController
+@inject DataConfig dataConfig
+
+@implements IDisposable
+
+<style>
+    .thumbnail {
+    position: relative;
+    z-index: 0;
+    text-decoration: none;
+    }
+
+    .thumbnail:hover {
+    background-color: transparent;
+    z-index: 50;
+    }
+
+    .thumbnail .thumbnail-img {
+    /*CSS for enlarged image*/
+    position: absolute;
+    padding: 5px;
+    visibility: hidden;
+    text-decoration: none;
+    }
+
+    .thumbnail .thumbnail-img img {
+    padding: 2px;
+    }
+
+    .thumbnail:hover .thumbnail-img {
+    /*CSS for enlarged image on hover*/
+    visibility: visible;
+    transform: scale(2);
+    transform-origin: top left;
+    position: fixed;
+    top: 5px;
+    left: 5px;
+    pointer-events: none;
+    }
+</style>
+
+<Card class="@(Hide ? "hide" : "")" style="margin-top: 10px">
+    <CardHeader>
+        <div class="d-flex">
+            <div class="p-2 bd-highlight">
+                Path Profile
+            </div>
+            <div class="p-2 flex-grow-1 bd-highlight">
+                <AutoComplete @bind-Value="Selected"
+                TItem="AutoCompleteItem"
+                DataProvider="DataProvider"
+                PropertyName="@nameof(AutoCompleteItem.Name)"
+                Placeholder="@(Files.First() ?? string.Empty)"
+                OnChanged="(AutoCompleteItem selected) => OnSelectedPathChanged(selected)"
+                Disabled="ButtonDisabled" />
+            </div>
+            <div class="p-2 bd-highlight">
+                <Button Color="ButtonColor.Primary" @onclick="OnClickButtonLoad" disabled="@(ButtonDisabled)">
+                    <span>Load Path</span>
+                </Button>
+            </div>
+        </div>
+    </CardHeader>
+</Card>
+
+@code {
+    [Parameter]
+    public bool Hide { get; set; } = false;
+
+    [Parameter]
+    public PathSettings? Target { get; set; }
+
+    [Parameter]
+    public int TargetIndex { get; set; } = 0;
+
+    private IEnumerable<string> Files { get; set; } = null!;
+
+    private int VisibleNum { get; set; } = 10;
+    private string Selected { get; set; } = new("");
+    private bool ButtonDisabled { get; set; } = true;
+
+    private FileSystemWatcher watcher = null!;
+
+    protected override void OnInitialized()
+    {
+        GetData();
+        ValidateLoadButton();
+
+        watcher = new(dataConfig.Path);
+
+        watcher.NotifyFilter = NotifyFilters.Attributes
+            | NotifyFilters.CreationTime
+            | NotifyFilters.DirectoryName
+            | NotifyFilters.FileName
+            | NotifyFilters.LastAccess
+            | NotifyFilters.LastWrite
+            | NotifyFilters.Security
+            | NotifyFilters.Size;
+
+        watcher.Changed += OnChanged;
+        watcher.Created += OnChanged;
+        watcher.Deleted += OnChanged;
+        watcher.Renamed += OnChanged;
+
+        watcher.Filter = "*.json";
+        watcher.IncludeSubdirectories = true;
+        watcher.EnableRaisingEvents = true;
+
+        botController.ProfileLoaded += ValidateLoadButton;
+
+        Selected = Target?.FileName ?? string.Empty;
+    }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        base.OnAfterRender(firstRender);
+    }
+
+    public void Dispose()
+    {
+        watcher.Dispose();
+        botController.ProfileLoaded -= ValidateLoadButton;
+    }
+
+    public void OnGet()
+    {
+        GetData();
+    }
+
+    private void OnSelectedPathChanged(AutoCompleteItem? pick)
+    {
+        string name = pick?.Name ?? string.Empty;
+
+        if (string.IsNullOrEmpty(name) || name == Files.First())
+        {
+            Selected = string.Empty;
+        }
+
+        botController.SelectedPathFilename[TargetIndex] = name;
+
+        ValidateLoadButton();
+        base.InvokeAsync(StateHasChanged);
+    }
+
+    private void OnTextChanged(string text)
+    {
+        VisibleNum = string.IsNullOrEmpty(text) ? 10 : 50;
+    }
+
+    private void OnChanged(object? sender, FileSystemEventArgs e)
+    {
+        GetData();
+        base.InvokeAsync(StateHasChanged);
+    }
+
+
+    private void OnClickButtonLoad()
+    {
+        botController.LoadPathProfile(botController.SelectedPathFilename);
+    }
+
+    private void ValidateLoadButton()
+    {
+        ButtonDisabled = string.IsNullOrEmpty(botController.SelectedClassFilename);
+    }
+
+    private void GetData()
+    {
+        Files = botController.PathFiles();
+
+        if (botController.SelectedPathFilename.TryGetValue(TargetIndex, out string? selected))
+        {
+            Selected = selected ?? string.Empty;
+        }
+    }
+
+    private async Task<AutoCompleteDataProviderResult<AutoCompleteItem>> DataProvider(AutoCompleteDataProviderRequest<AutoCompleteItem> request)
+    {
+        GetData();
+
+        var items = Files.Select(x => new AutoCompleteItem(x));
+
+        return await Task.FromResult(request.ApplyTo(items.OrderBy(i => i.Name)));
+    }
+
+    public sealed class AutoCompleteItem(string name)
+    {
+        public string Name { get; set; } = name;
+    }
+}

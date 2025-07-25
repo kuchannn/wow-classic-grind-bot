@@ -1,0 +1,242 @@
+﻿@using System.Runtime.InteropServices
+
+@inject IJSRuntime jsRuntime
+
+<span class="form-inline px-4">
+
+    <!-- Continent Combo -->
+    <label>Continent:</label>
+    <select disabled="@IsDisabled" class="form-control" @bind="MapId">
+        @foreach (var kvp in knownMapIds)
+        {
+            <option value="@kvp.Key">@kvp.Value</option>
+        }
+    </select>
+
+    <!-- From Combo -->
+    <label style="margin-left: 10px">From:</label>
+    <select disabled="@IsDisabled" class="form-control" @bind="From">
+        <option value=""></option>
+        @foreach (var location in knownLocations.Where(l => l.Location.W == MapId))
+        {
+            <option value="@location.Description">@location.Description</option>
+        }
+    </select>
+
+    <!-- To Combo -->
+    <label style="margin-left: 10px">To:</label>
+    <select disabled="@IsDisabled" class="form-control" @bind="To">
+        <option value=""></option>
+        @foreach (var location in knownLocations.Where(l => l.Location.W == MapId))
+        {
+            <option value="@location.Description">@location.Description</option>
+        }
+    </select>
+
+    <!-- Search Type Combo -->
+    <label style="margin-left: 10px">Search:</label>
+    <select disabled="@IsDisabled" class="form-control" @bind="SearchType">
+        <option value="0">Original</option>
+        <option value="1">A*</option>
+        <option value="2">A* avoid models</option>
+    </select>
+
+    <button style="margin-left: 10px" type="button" disabled="@IsDisabled" class="form-control btn btn-primary" @onclick="Draw">
+        @if (IsDisabled)
+        {
+            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+        }
+        Draw
+    </button>
+
+    <!-- Search Button -->
+    <button style="margin-left: 10px" type="button" disabled="@IsDisabled" class="form-control btn btn-primary" @onclick="StartSearch">
+        @if (IsDisabled)
+        {
+            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+        }
+        Search
+    </button>
+</span>
+
+@code {
+
+    [Parameter]
+    public EventCallback<SearchParam> OnSearch { get; set; }
+
+    [Parameter]
+    public EventCallback<SearchParam> OnDraw { get; set; }
+
+    [Parameter]
+    public bool IsDisabled { get; set; }
+
+    private float MapId { get; set; }
+    private string From { get; set; }
+    private string To { get; set; }
+    private int SearchType { get; set; }
+
+    private readonly List<SearchLocation> knownLocations = new();
+    private readonly Dictionary<float, string> knownMapIds = new();
+
+    private async Task StartSearch()
+    {
+        string error = string.Empty;
+        if (string.IsNullOrEmpty(From)) { error += "From is required. "; }
+        if (string.IsNullOrEmpty(To)) { error += "To is required. "; }
+
+        if (!string.IsNullOrEmpty(error))
+        {
+            await jsRuntime.InvokeAsync<object>("showAlert", error);
+            return;
+        }
+
+        SearchParam searchParameters = new()
+        {
+            From = knownLocations.Where(l => l.Description == this.From).FirstOrDefault(),
+            To = knownLocations.Where(l => l.Description == this.To).FirstOrDefault(),
+            SearchType = (SearchStrategy)this.SearchType,
+            Continent = ContinentDB.IdToName[this.MapId]
+        };
+
+        await OnSearch.InvokeAsync(searchParameters);
+    }
+
+    private async Task Draw()
+    {
+        string error = string.Empty;
+        if (string.IsNullOrEmpty(From)) { error += "From is required. "; }
+        if (string.IsNullOrEmpty(To)) { error += "To is required. "; }
+
+        if (!string.IsNullOrEmpty(error))
+        {
+            await jsRuntime.InvokeAsync<object>("showAlert", error);
+            return;
+        }
+
+        SearchParam searchParameters = new()
+        {
+            From = knownLocations.Where(l => l.Description == this.From).FirstOrDefault(),
+            To = knownLocations.Where(l => l.Description == this.To).FirstOrDefault(),
+            SearchType = (SearchStrategy)this.SearchType,
+            Continent = ContinentDB.IdToName[this.MapId]
+        };
+
+        await OnDraw.InvokeAsync(searchParameters);
+    }
+
+    protected override void OnInitialized()
+    {
+        PopulateSearchParams();
+    }
+
+    private void PopulateSearchParams()
+    {
+        if (ContinentDB.NameToId.TryGetValue("Kalimdor", out float Kalimdor))
+        {
+            knownMapIds.Add(Kalimdor, "Kalimdor");
+            knownLocations.AddRange(new List<SearchLocation> {
+                new(-7899, -3563, 50, Kalimdor, "Tanaris, South to Gadgetzan"),
+                new(-7200, -3770, 8, Kalimdor, "Tanaris, Gadgetzan"),
+                new(-7217, 907, -3, Kalimdor, "Silithus, The calling"),
+                new(-6861, 754, 40, Kalimdor, "Silithus, Repair"),
+
+                new(1381, -4368, 26, Kalimdor, "Durotar, Orgrimmar gates"),
+                new(-896, -3770, 11, Kalimdor, "Barrens, Rachet"),
+                new(-441, -2596, 96, Kalimdor, "Barrens, Crossroads,Barrens"),
+                new(-2380, -1882, 95, Kalimdor, "Barrens, Camp Taurajo,Barrens"),
+                new(965, 1040, 104, Kalimdor, "Stone talon, Sun Rock Retreat"),
+                new(-1718, 3198, 4, Kalimdor, "Desolace, Shadowprey village"),
+
+                new(2750, -3907, 91, Kalimdor, "Azshara, Alliance FP"),
+                new(2565, -6380, 108.701f, Kalimdor, "Azshara, Manor before bridge"),
+                new(2537, -6672, 104.5f, Kalimdor, "Azshara, Manor after bridge")
+            });
+        }
+
+        if (ContinentDB.NameToId.TryGetValue("Azeroth", out float Azeroth))
+        {
+            knownMapIds.Add(Azeroth, "Azeroth");
+            knownLocations.AddRange(new List<SearchLocation> {
+                new(-8264,-2689,134, Azeroth, "Burning Steppes, Flight path"),
+                new(-7558,-2167,154, Azeroth, "Burning Steppes, Ragged John"),
+                new(-6236,134,428, Azeroth, "Dun morogh, Cold ridge valley"),
+                new(-5880,-116,362, Azeroth, "Dun morogh, Cold ridge pass"),
+
+                new(-8997.167f, -54.24005f, 88.86176f, Azeroth, "Elwyn Forest, Northshire spot 1"),
+                new(-8948.777f, -46.50463f, 91.68633f, Azeroth, "Elwyn Forest, Northshire spot 2"),
+                new(-8903.322f, -69.84078f, 86.58018f, Azeroth, "Elwyn Forest, Northshire spot 3"),
+                new(-8846.563f, -50.88147f, 85.94726f, Azeroth, "Elwyn Forest, Northshire spot 4"),
+                new(-8801.825f, -71.98528f, 88.48592f, Azeroth, "Elwyn Forest, Northshire spot 5"),
+                new(-8819.195f, -133.7280f, 81.17621f, Azeroth, "Elwyn Forest, Northshire spot 6"),
+                new(-8866.953f, -118.7995f, 80.66679f, Azeroth, "Elwyn Forest, Northshire spot 7"),
+                new(-8939.639f, -80.44841f, 87.70438f, Azeroth, "Elwyn Forest, Northshire spot 8"),
+                new(-8987.028f, -57.00874f, 90.75562f, Azeroth, "Elwyn Forest, Northshire spot 9"),
+
+                new(-8851.57f, -188.234f, 89.31455f, Azeroth, "Elwyn Forest, Northshire Khelden Bremen"),
+                new(-8853.587f, -193.336f, 81.9331f, Azeroth, "Elwyn Forest, Northshire Priestess Anetta"),
+                new(-8926.743f, -195.5889f, 80.58859f, Azeroth, "Elwyn Forest, Northshire Drusilla La Salle"),
+                new(-8863.468f, -210.9055f, 80.57187f, Azeroth, "Elwyn Forest, Northshire Jorik Kerridan"),
+                new(-8914.567f, -215.0163f, 82.11676f, Azeroth, "Elwyn Forest, Northshire Brother Sammuel"),
+                new(-8918.364f, -208.4109f, 82.12556f, Azeroth, "Elwyn Forest, Northshire Llane Beshere"),
+                new(-8924.651f, -149.9028f, 81.36338f, Azeroth, "Elwyn Forest, Northshire Ashley Blank"),
+
+                new(-8908.27f, -129.904f, 80.91549f, Azeroth, "Elwyn Forest, Northshire Mailbox")
+            });
+        }
+
+        if (ContinentDB.NameToId.TryGetValue("Expansion01", out float Expansion01))
+        {
+            knownMapIds.Add(Expansion01, "Expansion01");
+            knownLocations.AddRange(new List<SearchLocation> {
+                new(-1863, 5419, -10, Expansion01, "Terrokar, Shattrath"),
+                new(-2623, 4445, 36, Expansion01, "Terrokar, Stonebreaker Hold"),
+                new(-2712, 3743, -2, Expansion01, "Terrokar, Grind spot"),
+                new(-3561.1f, 639.1f, 3.1f, Expansion01, "Shadowmoon Valley, Black Temple"),
+            });
+        }
+
+        if (ContinentDB.NameToId.TryGetValue("Northrend", out float Northrend))
+        {
+            knownMapIds.Add(Northrend, "Northrend");
+            knownLocations.AddRange(new List<SearchLocation> {
+                new(5565, 5757, -75, Northrend, "Sholazar, Nesingwary Base"),
+                new(6033, 5520, -77, Northrend, "Sholazar, Spot 1"),
+                new(5649, 5956, -47, Northrend, "Sholazar, Spot 2"),
+                new(5241, 5922, -60, Northrend, "Sholazar, Spot 3"),
+                new(5194, 5709, -85, Northrend, "Sholazar, Spot 4"),
+            });
+        }
+
+        ReadTeleportsLocationsFile();
+    }
+
+    private void ReadTeleportsLocationsFile()
+    {
+        foreach (ReadOnlySpan<char> line in System.IO.File.ReadLines("wwwroot/teleport_locations.txt"))
+        {
+            ReadOnlySpan<char> trim = line.Trim();
+            if (trim.IsEmpty)
+                continue;
+
+            // id x y z orientation mapId desc
+            Span<Range> ranges = stackalloc Range[7];
+            trim.Split(ranges, ' ');
+
+            float x = float.Parse(trim[ranges[1]]);
+            float y = float.Parse(trim[ranges[2]]);
+            float z = float.Parse(trim[ranges[3]]);
+            float mapId = float.Parse(trim[ranges[5]]);
+
+            string desc = trim[ranges[6]].ToString();
+
+            ref string valueRef = ref CollectionsMarshal.GetValueRefOrAddDefault(knownMapIds, mapId, out bool exists);
+            if (!exists)
+            {
+                valueRef = desc;
+            }
+
+            knownLocations.Add(new(x, y, z, mapId, desc));
+        }
+    }
+
+}

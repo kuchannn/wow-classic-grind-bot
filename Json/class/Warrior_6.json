@@ -1,0 +1,88 @@
+{
+  "ClassName": "Warrior",
+  "PathFilename": "_pack\\1-20\\Dwarf.Gnome\\6-10_Dun Morogh.json",
+  "Pull": {
+    "Sequence": [
+      {
+        "Name": "Charge",
+        "Key": "3",
+        "WhenUsable": true,
+        "Requirement": "SpellInRange:0",
+        "AfterCastWaitMeleeRange": true
+      }
+    ]
+  },
+  "Combat": {
+    "Sequence": [
+      {
+        "Name": "Battle Shout",
+        "Key": "4",
+        "WhenUsable": true,
+        "Requirement": "!Battle Shout"
+      },
+      {
+        "Name": "Rend",
+        "Key": "5",
+        "WhenUsable": true,
+        "Requirements": [
+          "TargetHealth% > 90",
+          "!Rend"
+        ]
+      },
+      {
+        "Name": "Thunder Clap",
+        "Key": "6",
+        "WhenUsable": true,
+        "Requirements": [
+          "MobCount > 1",
+          "!Thunder Clap"
+        ]
+      },
+      {
+        "Name": "Heroic Strike",
+        "Key": "2",
+        "WhenUsable": true,
+        "Requirement": "MainHandSwing > -400",
+        "AfterCastWaitSwing": true
+      },
+      {
+        "Name": "AutoAttack"
+      },
+      {
+        "Name": "Approach",
+        "Log": false
+      }
+    ]
+  },
+  "Adhoc": {
+    "Sequence": [
+      {
+        "Name": "Food",
+        "Key": "=",
+        "Requirement": "Health% < 60",
+        "Cost": 3
+      }
+    ]
+  },
+  "NPC": {
+    "Sequence": [
+      {
+        "Name": "Repair",
+        "Key": "C",
+        "Requirement": "Durability% < 35",
+        "PathFilename": "5_Gnome_Vendor.json",
+        "Cost": 6
+      },
+      {
+        "Name": "Sell",
+        "Key": "C",
+        "Requirements": [
+          "BagFull",
+          "BagGreyItem"
+        ],
+        "PathFilename": "5_Gnome_Vendor.json",
+        "Cost": 6
+      }
+    ]
+  }
+}

@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.1.32328.378
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WowheadDB_Extractor", "WowheadDB_Extractor.csproj", "{900910B7-BD72-4C6B-8BE3-5B7E3F76826D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{900910B7-BD72-4C6B-8BE3-5B7E3F76826D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{900910B7-BD72-4C6B-8BE3-5B7E3F76826D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{900910B7-BD72-4C6B-8BE3-5B7E3F76826D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{900910B7-BD72-4C6B-8BE3-5B7E3F76826D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {35DD9921-7AC2-4AA2-8683-2921BF81D239}
+	EndGlobalSection
+EndGlobal

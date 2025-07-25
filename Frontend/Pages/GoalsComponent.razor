@@ -1,0 +1,130 @@
+﻿@inject IBotController botController
+@inject IAddonReader addonReader
+
+@inject PlayerReader PlayerReader
+@inject TimeToKill ttk
+
+@implements IDisposable
+
+<Card style="margin-top: 10px">
+    <CardHeader>
+        <div class="d-flex">
+            <div class="p-2 flex-grow-1 bd-highlight">
+                Goals<br/>
+                @PlayerReader.MinRange()-@PlayerReader.MaxRange()
+            </div>
+            <div class="p-2 bd-highlight">
+                <span>
+                    Npc: @NpcLatency.ToString("0.0")ms |
+                    Bot: @addonReader.AvgUpdateLatency.ToString("0.0")ms<br/>
+                    Net: @PlayerReader.NetworkLatency.ToString()ms
+                </span>
+            </div>
+            <div class="p-2 bd-highlight">
+                <InitButton /> <ToggleButton Disable="@(botController.ClassConfig?.Mode == Mode.AttendedGather)" />
+            </div>
+        </div>
+    </CardHeader>
+
+    @if (ShowPlan && botController.GoapAgent != null && botController.GoapAgent.Plan.Count > 0)
+    {
+        <CardBody>
+            <table class="table table-sm table-striped table-bordered">
+                <tbody>
+                    @foreach (var goal in botController.GoapAgent.Plan)
+                    {
+                        <GoapGoalView goal="goal" IsSelected="false" Expand="false" />
+                    }
+                </tbody>
+            </table>
+        </CardBody>
+    }
+    @if (ShowGoals && botController.GoapAgent != null)
+    {
+        <CardBody>
+            <table class="table table-sm table-striped table-bordered">
+                <tbody>
+                    <tr>
+                        <td colspan="2">
+                            <Button style="margin-right:4px" Color="ButtonColor.Secondary" @onclick="() => {
+                            CurrentOnly = !CurrentOnly;
+                            if (CurrentOnly)
+                            Expand = true;
+                        }">
+                                <span>@(LabelCurrent(CurrentOnly))</span>
+                            </Button>
+                            @if (!CurrentOnly)
+                            {
+                                <Button style="margin-right:4px" Color="ButtonColor.Secondary" @onclick="() => Expand = !Expand">
+                                    <span>@(LabelExpand(Expand))</span>
+                                </Button>
+                            }
+                            <Button Color="ButtonColor.Secondary" @onclick="() => Requirements = !Requirements">
+                                <span>@(LabelRequirements(Requirements))</span>
+                            </Button>
+                        </td>
+                    </tr>
+
+                    @foreach (var goal in botController.GoapAgent.AvailableGoals)
+                    {
+                        if (CurrentOnly && goal != botController.GoapAgent.CurrentGoal)
+                            continue;
+
+                        <GoapGoalView goal="goal"
+                                      IsSelected="(!CurrentOnly && goal == botController.GoapAgent.CurrentGoal)"
+                                      Expand="@(Expand || goal.GetType() == typeof(Core.Goals.ParallelGoal))"
+                                      ShowAll="@Requirements" />
+                    }
+                </tbody>
+            </table>
+        </CardBody>
+    }
+</Card>
+
+@code {
+
+    [Parameter]
+    public bool ShowGoals { get; set; } = true;
+
+    [Parameter]
+    public bool ShowPlan { get; set; } = true;
+
+    public bool Expand { get; set; } = false;
+
+    public bool Requirements { get; set; } = false;
+
+    public bool CurrentOnly { get; set; } = false;
+
+    public double NpcLatency => botController.AvgScreenLatency + botController.AvgNPCLatency;
+
+    protected override void OnInitialized()
+    {
+        addonReader.AddonDataChanged += OnAddonDataChanged;
+    }
+
+    public void Dispose()
+    {
+        addonReader.AddonDataChanged -= OnAddonDataChanged;
+    }
+
+    private void OnAddonDataChanged()
+    {
+        base.InvokeAsync(StateHasChanged);
+    }
+
+    private string LabelCurrent(bool val)
+    {
+        return val ? "Current" : "All";
+    }
+
+    private string LabelExpand(bool val)
+    {
+        return val ? "Unfold" : "Fold";
+    }
+
+    private string LabelRequirements(bool val)
+    {
+        return val ? "Every" : "Missing";
+    }
+
+}

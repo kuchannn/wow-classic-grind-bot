@@ -1,0 +1,176 @@
+﻿@using System.Text
+@using Core
+@using Core.GOAP
+@using Core.Goals
+@using System.Text.RegularExpressions
+
+@inject WApi api
+
+@inject IBotController botController
+
+@inject ActionBarCooldownReader ActionBarCooldownReader
+
+<tr class="@ActionClass(IsSelected, 0)">
+    <td>
+        <b style="color:@DisplayCanRun(goal.CanRun())">@goal.Cost: @GoalName(goal)</b>
+    </td>
+    <td>
+        @foreach ((GoapKey key, bool value) in goal.Preconditions)
+        {
+            <Badge style="margin-right:4px;" Color="Badge(botController.GoapAgent!.HasState(key) == value)">@(key.ToStringF(value))</Badge>
+        }
+        @if (goal.Keys.Length == 1)
+        {
+            KeyAction key = goal.Keys[0];
+            @for (int i = 0; i < key.RequirementsRuntime.Length; i++)
+            {
+                Requirement rq = key.RequirementsRuntime[i];
+                if (rq.VisibleIfHasRequirement || !rq.HasRequirement() || ShowAll)
+                {
+                    var enumerator = DisplayRequirementBadges(rq);
+                    while (enumerator.MoveNext())
+                    {
+                        var item = enumerator.Current;
+                        <Badge style="margin-right:4px;" Color="@item.color">@item.text</Badge>
+                    }
+                }
+            }
+        }
+    </td>
+</tr>
+@if (goal.Keys.Length > 1 && (IsSelected || Expand))
+{
+    <tr>
+        <td colspan="2">
+            <table class="table table-sm table-striped mb-0">
+                <tbody>
+                    @{
+                        int lastKey = KeyAction.LastKeyClicked();
+                        ReadOnlySpan<KeyAction> span = goal.Keys.AsSpan();
+                    }
+                    @for (int k = 0; k < span.Length; k++)
+                    {
+                        KeyAction key = span[k];
+
+                        int cooldown = 0;
+                        if (key.Slot > 0)
+                            cooldown = ActionBarCooldownReader.Get(key);
+
+                        <tr class="@ActionClass(goal == botController.GoapAgent!.CurrentGoal && lastKey == key.ConsoleKeyFormHash, cooldown)">
+                            <td>
+                                @if (key.HasForm)
+                                {
+                                    <img style="margin-right:4px" src="@FormResourceName(key.FormValue)" />
+                                }
+                                <b style="color:@DisplayCanRun(key.CanRun())">@KeyActionSpellName(key)</b>
+                            </td>
+                            <td>
+                                @{
+                                    ReadOnlySpan<Requirement> reqSpan = key.RequirementsRuntime.AsSpan();
+                                }
+                                @for (int r = 0; r < reqSpan.Length; r++)
+                                {
+                                    Requirement rq = reqSpan[r];
+                                    if (rq.VisibleIfHasRequirement || !rq.HasRequirement() || ShowAll)
+                                    {
+                                        var enumerator = DisplayRequirementBadges(rq);
+                                        while (enumerator.MoveNext())
+                                        {
+                                            var item = enumerator.Current;
+                                            <Badge style="margin-right:4px;" Color="@item.color">@item.text</Badge>
+                                        }
+                                    }
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </td>
+    </tr>
+}
+
+@code {
+
+    [Parameter]
+    public bool IsSelected { get; set; }
+
+    [Parameter]
+    public bool Expand { get; set; } = false;
+
+    [Parameter]
+    public bool ShowAll { get; set; } = false;
+
+    [Parameter]
+    public GoapGoal goal { get; set; } = new NullGoal();
+
+    private static readonly Regex regex = new($"({Requirement.And})|({Requirement.Or})", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+    private static readonly StringBuilder stringBuilder = new();
+
+    private static IEnumerator<(BadgeColor color, string text)> DisplayRequirementBadges(Requirement requirement)
+    {
+        var renderText = requirement.LogMessage();
+
+        List<(BadgeColor color, string text)> items = new();
+
+        foreach (var part in regex.EnumerateSplits(renderText))
+        {
+            var text = renderText.AsSpan(part);
+            var trimmedPart = text.Trim();
+
+            if (trimmedPart.IsEmpty)
+                continue;
+
+            if (trimmedPart.StartsWith(Requirement.And) || trimmedPart.StartsWith(Requirement.Or))
+            {
+                items.Add(new(BadgeColor.Secondary, trimmedPart.ToString()));
+            }
+            else
+            {
+                var color = Badge(requirement.HasRequirement());
+                items.Add(new(color, trimmedPart.ToString()));
+            }
+        }
+
+        return items.GetEnumerator();
+    }
+
+    private static BadgeColor Badge(bool value)
+    {
+        return value ? BadgeColor.Success : BadgeColor.Danger;
+    }
+
+    private static string ActionClass(bool item, int cooldown)
+    {
+        if (cooldown > 0)
+            return "table-danger animate__animated animate__fadeIn";
+
+        return item ? "table-warning animate__animated animate__fadeIn" : "";
+    }
+
+    private static string DisplayCanRun(bool item)
+    {
+        return item ? "" : "gray";
+    }
+
+    private string FormResourceName(Form i)
+    {
+        return $"_content/Frontend/img/form/small/{i.ToStringF().ToLower()}.jpg";
+    }
+
+    public MarkupString GoalName(GoapGoal goal)
+    {
+        if (goal.Keys.Length == 1)
+            return KeyActionSpellName(goal.Keys[0]);
+
+        return new MarkupString(goal.DisplayName);
+    }
+
+    public MarkupString KeyActionSpellName(KeyAction keyAction)
+    {
+        if (keyAction.SpellId == 0)
+            return new MarkupString($"{keyAction.Name} [{keyAction.Key}]");
+
+        return new($"<a href=\"{api.SpellId}{keyAction.SpellId}\" target=\"_blank\" data-wowhead=\"spell={keyAction.SpellId}\" style=\"text-decoration:none;color:inherit\">{keyAction.Name} [{keyAction.Key}]</a>");
+    }
+}

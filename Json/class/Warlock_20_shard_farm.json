@@ -1,0 +1,192 @@
+{
+  "ClassName": "Warlock",
+  "Loot": true,
+  "NPCMaxLevels_Above": 2,
+  "NPCMaxLevels_Below": 6,
+  "PathFilename": "23_Duskwood.json",
+  "PathThereAndBack": false,
+  "PathReduceSteps": true,
+  "Blacklist": [
+    "Murloc Hunter",
+    "Murloc Oracle",
+    "Murloc Tidehunter"
+  ],
+  "ImmunityBlacklist": {
+    "1043": [
+      "Shadow"
+    ]
+  },
+  "IntVariables": {
+    "DOT_MIN_HEALTH%": 35,
+    "Item_Soul_Shard": 6265
+  },
+  "Pull": {
+    "Sequence": [
+      {
+        "Name": "Immolate",
+        "Key": "5",
+        "HasCastBar": true
+      }
+    ]
+  },
+  "Combat": {
+    "Sequence": [
+      {
+        "Name": "Drain Soul",
+        "Key": "9",
+        "School": "Shadow",
+        "HasCastBar": true,
+        "Requirements": [
+          "TargetHealth% < 40",
+          "!BagItem:Item_Soul_Shard:72",
+          "TargetYieldXP"
+        ]
+      },
+      {
+        "Name": "Drain Life",
+        "Key": "N4",
+        "School": "Shadow",
+        "HasCastBar": true,
+        "Requirements": [
+          "Health% < 30"
+        ]
+      },
+      {
+        "Name": "Immolate",
+        "Key": "5",
+        "Requirements": [
+          "TargetHealth% > DOT_MIN_HEALTH%",
+          "!Immolate",
+          "!TargetsMe"
+        ],
+        "HasCastBar": true,
+        "ResetOnNewTarget": true
+      },
+      {
+        "Name": "Curse of Agony",
+        "Key": "1",
+        "School": "Shadow",
+        "ResetOnNewTarget": true,
+        "Requirements": [
+          "TargetHealth% > DOT_MIN_HEALTH%",
+          "!Curse of Agony"
+        ]
+      },
+      {
+        "Name": "Corruption",
+        "Key": "7",
+        "School": "Shadow",
+        "Requirements": [
+          "TargetHealth% > DOT_MIN_HEALTH%",
+          "!Corruption",
+          "Talent:Improved Corruption:5"
+        ],
+        "ResetOnNewTarget": true,
+        "Log": false
+      },
+      {
+        "Name": "Shadow Bolt",
+        "Key": "2",
+        "School": "Shadow",
+        "HasCastBar": true,
+        "ResetOnNewTarget": true,
+        "Requirements": [
+          "TargetHealth% > DOT_MIN_HEALTH%",
+          "!TargetsMe"
+        ],
+        "Cooldown": 8000
+      },
+      {
+        "Name": "Health Funnel",
+        "Key": "N6",
+        "HasCastBar": true,
+        "WhenUsable": true,
+        "Requirements": [
+          "Has Pet",
+          "Health% > 70",
+          "PetHealth% < 30"
+        ]
+      },
+      {
+        "Name": "Shoot",
+        "Key": "0",
+        "Item": true,
+        "Requirements": [
+          "HasRangedWeapon",
+          "!Shooting",
+          "SpellInRange:1"
+        ]
+      },
+      {
+        "Name": "AutoAttack",
+        "Requirements": [
+          "!HasRangedWeapon"
+        ]
+      }
+    ]
+  },
+  "Parallel": {
+    "Sequence": [
+      {
+        "Name": "Food",
+        "Key": "=",
+        "Requirement": "Health% < 50"
+      },
+      {
+        "Name": "Drink",
+        "Key": "-",
+        "Requirement": "Mana% < 40"
+      }
+    ]
+  },
+  "Adhoc": {
+    "Sequence": [
+      {
+        "Name": "Demon Armor",
+        "Key": "3",
+        "Requirement": "!Demon Armor"
+      },
+      {
+        "Name": "Summon Voidwalker",
+        "Key": "4",
+        "HasCastBar": true,
+        "Requirements": [
+          "BagItem:Item_Soul_Shard",
+          "!Has Pet"
+        ],
+        "AfterCastWaitCastbar": true,
+        "AfterCastAuraExpected": true
+      },
+      {
+        "Name": "Life Tap",
+        "Key": "8",
+        "Charge": 2,
+        "Requirements": [
+          "Health% > 70",
+          "Mana% < 60"
+        ]
+      }
+    ]
+  },
+  "NPC": {
+    "Sequence": [
+      {
+        "Name": "Repair",
+        "Key": "C",
+        "Requirement": "Durability% < 35",
+        "PathFilename": "23_Duskwood_Vendor.json",
+        "Cost": 6
+      },
+      {
+        "Name": "Sell",
+        "Key": "C",
+        "Requirements": [
+          "BagFull",
+          "BagGreyItem"
+        ],
+        "PathFilename": "23_Duskwood_Vendor.json",
+        "Cost": 6
+      }
+    ]
+  }
+}

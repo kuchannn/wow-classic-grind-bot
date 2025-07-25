@@ -1,0 +1,124 @@
+{
+  "ClassName": "Paladin",
+  "PathFilename": "_pack\\1-20\\Draenei\\5-9_Azuremyst Isle.json",
+  "Pull": {
+    "Sequence": [
+      {
+        "Name": "Seal of the Crusader",
+        "Key": "6",
+        "WhenUsable": true,
+        "Requirements": [
+          "!Seal of the Crusader",
+          "!Judgement of the Crusader",
+          "CD_Judgement <= 1500"
+        ]
+      },
+      {
+        "Name": "Judgement",
+        "Key": "1",
+        "WhenUsable": true,
+        "Requirements": [
+          "SpellInRange:0",
+          "Seal of the Crusader",
+          "!Judgement of the Crusader"
+        ]
+      }
+    ]
+  },
+  "Combat": {
+    "Sequence": [
+      {
+        "Name": "Divine Protection",
+        "Key": "N1",
+        "WhenUsable": true,
+        "Requirements": [
+          "Health%<20"
+        ]
+      },
+      {
+        "Name": "Holy Light",
+        "Key": "3",
+        "HasCastBar": true,
+        "WhenUsable": true,
+        "Requirements": [
+          "(Divine Protection && Health% < 60) || (!Divine Protection && CD_Divine Protection > 0 && Health% < 50 && TargetHealth%>20 && LastMainHandMs <= 1000)"
+        ]
+      },
+      {
+        "Name": "Judgement",
+        "Key": "1",
+        "WhenUsable": true,
+        "Requirements": [
+          "SpellInRange:0"
+        ]
+      },
+      {
+        "Name": "Seal of Righteousness",
+        "Key": "2",
+        "Requirements": [
+          "!Seal of Righteousness"
+        ]
+      },
+      {
+        "Name": "AutoAttack",
+        "Requirements": [
+          "!Divine Protection"
+        ]
+      },
+      {
+        "Name": "Approach",
+        "Log": false
+      }
+    ]
+  },
+  "Adhoc": {
+    "Sequence": [
+      {
+        "Name": "Devotion Aura",
+        "Key": "5",
+        "Requirement": "!Form:Paladin_Devotion_Aura",
+        "AfterCastAuraExpected": true
+      },
+      {
+        "Name": "Blessing of Might",
+        "Key": "4",
+        "Requirement": "!Blessing of Might"
+      }
+    ]
+  },
+  "Parallel": {
+    "Sequence": [
+      {
+        "Name": "Drink",
+        "Key": "-",
+        "Requirement": "Mana% < 50"
+      },
+      {
+        "Name": "Food",
+        "Key": "=",
+        "Requirement": "Health% < 50"
+      }
+    ]
+  },
+  "NPC": {
+    "Sequence": [
+      {
+        "Name": "Repair",
+        "Key": "C",
+        "Requirement": "Durability% < 35",
+        "PathFilename": "5_Draenei_Vendor.json",
+        "Cost": 6
+      },
+      {
+        "Name": "Sell",
+        "Key": "C",
+        "Requirements": [
+          "BagFull",
+          "BagGreyItem"
+        ],
+        "PathFilename": "5_Draenei_Vendor.json",
+        "Cost": 6
+      }
+    ]
+  }
+}

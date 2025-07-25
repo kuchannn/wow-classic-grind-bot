@@ -1,0 +1,673 @@
+﻿@page "/RecordPath"
+
+@using Newtonsoft.Json
+@using System.IO
+@using System.Numerics
+@using SharedLib.Extensions
+@using Core.Database
+@using System.Runtime.InteropServices
+
+@inject IAddonReader addonReader
+@inject PlayerReader PlayerReader
+@inject IBotController botController
+@inject IJSRuntime JSRuntime
+@inject DataConfig dataConfig
+@inject AreaDB areaDB
+@inject WApi wapi
+
+<div class="row">
+    <div class="col-sm">
+        <h3>Path Editor/Recorder</h3>
+        @if (!recording)
+        {
+            <button class="btn btn-danger" @onclick="() => StartRecording(true)">Record New</button>
+            @if (editPath.Count > 0)
+            {
+                <button class="btn btn-primary" @onclick="() => StartRecording(false)">Continue Recording</button>
+            }
+        }
+        @if (!editing)
+        {
+            <button class="btn btn-primary" @onclick="StartEditing">Edit</button>
+        }
+        @if (recording || editing)
+        {
+            <div>
+                <button class="btn btn-success"
+                        disabled=@(editPath.Count == 0)
+                        @onclick="() => SaveToFile(false)">
+                    Save to new file & use path
+                </button>
+                <button class="btn btn-primary"
+                        disabled=@(editPath.Count == 0)
+                        @onclick="Use">
+                    Use new path without save
+                </button>
+                @if (editPath.Count > 0)
+                {
+                    <button class="btn btn-danger" @onclick="Clear">Clear</button>
+                }
+            </div>
+            <div>
+                <button class="btn btn-warning"
+                        disabled=@(editPath.Count == 0)
+                        @onclick="() => SaveToFile(true)">
+                    Save to <b>@(loadedPathFile)</b>
+                </button>
+            </div>
+        }
+        <div>@message</div>
+    </div>
+    <div class="col-sm">
+        <h3><span style="color:orange">&#9650;</span> Player</h3>
+        <input type="text" class="col-sm-2 form-control" disabled="disabled" value="@PlayerReader.MapX" />
+        <input type="text" class="col-sm-2 form-control" disabled="disabled" value="@PlayerReader.MapY" />
+        <hr>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md" style="border:1px solid rgba(255,255,255,.125); border-radius: 0.25rem;">
+        <div id="grid">
+            <svg width="@(Size)px" height="@(Size)px">
+                <g class="background"></g>
+
+                <g id="playerloc" transform='translate(@(routeInfo.ToCanvasPointX(PlayerReader.MapX)-5), @(routeInfo.ToCanvasPointY(PlayerReader.MapY)-5)) rotate(@PlayerDir 5 5)'>
+                    <svg width="10" height="10">
+                        <polygon points="5,0 8.5,8.5 1.5,8.5 5,0" fill="orange" />
+                    </svg>
+                </g>
+
+                <g class="group2">
+                    <g stroke-width="1" stroke="gray">
+                        @this.PathLines
+                    </g>
+                    <g fill="black">
+                        @this.PathPoints
+                    </g>
+                    <g fill="red">
+                        @this.SelectedPoints
+                    </g>
+                    <g fill="yellow">
+                        @this.PreviewPoints
+                    </g>
+
+                    @if (recording && editPath.Count > 0)
+                    {
+                        <g>
+                            <circle fill="transparent" stroke="black"
+                                    cx='@(routeInfo.ToCanvasPointX(editPath.Last().X))'
+                                    cy='@(routeInfo.ToCanvasPointY(editPath.Last().Y))'
+                                    r='@(routeInfo.DistanceToGrid(Distance))' />
+                        </g>
+                    }
+                </g>
+            </svg>
+        </div>
+    </div>
+
+    <div class="col-sm">
+        @if (editing)
+        {
+            if (selectedPoint != default)
+            {
+                <table>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <h3>&#128308; Selected</h3>
+                            </td>
+                            <td>
+                                @if (selectedPoint != previewPoint)
+                                {
+                                    <h3>&#128993; Preview</h3>
+                                }
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <input type="text" id="posx" class="col-sm-6 form-control" @bind="X" />
+                                <input type="text" id="posy" class="col-sm-6 form-control" @bind="Y" />
+                            </td>
+                            <td>
+                                @if (selectedPoint != previewPoint)
+                                {
+                                    <input type="text" class="col-sm-6 form-control" disabled="disabled" @bind="selectedPoint.X" />
+                                    <input type="text" class="col-sm-6 form-control" disabled="disabled" @bind="selectedPoint.Y" />
+                                }
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <hr />
+                                <button class="btn btn-danger" @onclick="RemoveAllSelected">Remove</button>
+                                <hr />
+                                <button class="btn btn-warning"
+                                        disabled="@(this.selectedPoint != this.previewPoint ? null : "disabled")"
+                                        @onclick="UpdateSelectedWithPreview">
+                                    Move to preview
+                                </button>
+                                <hr />
+                                <button class="btn btn-primary" @onclick="UpdateSelectedWithPlayer">Move to player</button>
+                                <hr />
+                                <button class="btn btn-success" @onclick="InsertPlayerLocationAfterSelected">Insert player location after selected</button>
+                            </td>
+                            <td>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <hr>
+                <button class="btn btn-primary" @onclick="Previous">Previous</button>
+                <button class="btn btn-primary" @onclick="Next">Next</button>
+                <hr>
+            }
+            <button class="btn btn-danger" @onclick="HalvenPoints">Halven points</button>
+            <button class="btn btn-success" @onclick="DoublePoints">Double points</button>
+
+            <div>@error</div>
+            <br />
+        }
+
+        @if (recording)
+        {
+            <table>
+                <tbody>
+                    <tr>
+                        <td>
+                            Distance between spots =  @Distance
+                        </td>
+                        <td>
+                            <input class="form-control slider" type="range" min="@MIN_DISTANCE" max="@MAX_DISTANCE" @bind="Distance" style="width:300px; margin-left:20px">
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        }
+
+        @if (recording || editing)
+        {
+            <h3>Available Points (@editPath.Count)</h3>
+            @for (int i = 0; i < editPath.Count; i++)
+            {
+                var point = editPath[i];
+                int index = i;
+                <Badge Color="@DisplayBadge(point)" @onclick="() => UpdateSelectedPoint(point, index)">
+                    @point.X.ToString("0.00"),@point.Y.ToString("0.00")&nbsp;
+                </Badge>
+            }
+        }
+    </div>
+</div>
+
+<div id="tooltip" display="none" style="position: absolute; display: none;"></div>
+
+@code {
+
+    private int Size = 600;
+    private int Margin = 60;
+
+    protected bool recording;
+    protected bool editing;
+
+    // dark theme
+    private string Color3 = Color3Dark;
+    private string Color4 = Color4Dark;
+
+    private const string Color3Dark = "#444";
+    private const string Color4Dark = "#666";
+
+    private const string Color3Light = "#BBBBBB";
+    private const string Color4Light = "#999999";
+
+    protected MarkupString PathLines = new MarkupString();
+    protected MarkupString PathPoints = new MarkupString();
+    protected MarkupString SelectedPoints = new MarkupString();
+    protected MarkupString PreviewPoints = new MarkupString();
+
+    protected float PlayerDir => -PlayerReader.Direction * (180f / MathF.PI);
+
+    protected int MIN_DISTANCE = 1;
+    protected int MAX_DISTANCE = 100;
+
+    protected int distance = 60;
+    protected int Distance
+    {
+        get => distance;
+        set
+        {
+            distance = value;
+            UpdateRouteMarkup();
+        }
+    }
+
+    protected string x = "0";
+    protected string y = "0";
+    private int cachedIndex = 0;
+
+    protected string X { get => x; set { x = value; UpdatePreviewPoint(); } }
+    protected string Y { get => y; set { y = value; UpdatePreviewPoint(); } }
+
+    protected string error = string.Empty;
+    protected string message = string.Empty;
+
+    protected Vector3 selectedPoint;
+    protected Vector3 previewPoint;
+
+    protected Vector3 lastPlayerPoint;
+
+    private RouteInfo routeInfo = null!;
+
+    private List<Vector3> editPath { get; set; } = new();
+
+    private string loadedPathFile =>
+        botController.ClassConfig!.Paths[0].PathFilename.Replace(dataConfig.Path, "");
+
+    private string areaName = string.Empty;
+
+    protected override void OnInitialized()
+    {
+        routeInfo = botController.RouteInfo!;
+
+        areaDB.Changed += OnZoneChanged;
+
+        UpdateZoneName();
+
+        editPath = routeInfo.Route.ToList();
+
+        addonReader.AddonDataChanged += OnAddonDataChanged;
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            var dotNetReference = DotNetObjectReference.Create(this);
+            await JSRuntime.InvokeVoidAsync("init", dotNetReference);
+            await JSRuntime.InvokeVoidAsync("draw", Color3, Color4);
+
+            UpdateRouteMarkup();
+        }
+    }
+
+    protected async ValueTask DisposeAsync()
+    {
+        addonReader.AddonDataChanged -= OnAddonDataChanged;
+
+        areaDB.Changed -= OnZoneChanged;
+
+        await JSRuntime.InvokeVoidAsync("dispose");
+    }
+
+
+    private void OnAddonDataChangedAction()
+    {
+        if (!UpdateRecording() && lastPlayerPoint != PlayerReader.MapPosNoZ)
+        {
+            lastPlayerPoint = PlayerReader.MapPosNoZ;
+            UpdateRouteMarkup();
+            StateHasChanged();
+        }
+
+        /*
+        // requires async
+        var p = PlayerReader.PlayerLocation;
+            var pp = new Vector3(
+            route.ToCanvasPointX(p.X),
+            route.ToCanvasPointY(p.Y),
+        0);
+
+        await JSRuntime.InvokeVoidAsync("focusAt", JsonConvert.SerializeObject(pp));
+    */
+    }
+
+    private void UpdateZoneName()
+    {
+        areaName = PlayerReader.WorldMapArea.AreaName;
+    }
+
+    private void ActionZoneChangedAction()
+    {
+        UpdateZoneName();
+        StateHasChanged();
+    }
+
+    private void OnZoneChanged()
+    {
+        base.InvokeAsync(ActionZoneChangedAction);
+    }
+
+    private void OnAddonDataChanged()
+    {
+        base.InvokeAsync(OnAddonDataChangedAction);
+    }
+
+
+    protected BadgeColor DisplayBadge(Vector3 point)
+    {
+        if (this.selectedPoint == point)
+        {
+            return BadgeColor.Danger;
+        }
+
+        return BadgeColor.Info;
+    }
+
+
+    protected void UpdateRouteMarkup()
+    {
+        error = string.Empty;
+        routeInfo.SetMargin(Margin);
+        routeInfo.SetCanvasSize(Size);
+
+        if (editPath.Count > 0)
+        {
+            var span = CollectionsMarshal.AsSpan(editPath);
+            Span<Vector3> span1 = stackalloc Vector3[1];
+            span1[0] = this.selectedPoint;
+
+            this.PathLines =
+                new MarkupString(routeInfo.RenderPathLines(span));
+            this.PathPoints =
+                new MarkupString(routeInfo.RenderPathPoints(span));
+
+            this.SelectedPoints =
+                new MarkupString(routeInfo.RenderPathPoints(span1));
+
+            if (this.selectedPoint != this.previewPoint)
+            {
+                span1[0] = this.previewPoint;
+                this.PreviewPoints =
+                new MarkupString(routeInfo.RenderPathPoints(span1));
+            }
+            else
+            {
+                this.PreviewPoints = new MarkupString(string.Empty);
+            }
+        }
+        else
+        {
+            ClearMarkup();
+        }
+    }
+
+    protected void ClearMarkup()
+    {
+        PathLines = new MarkupString();
+        PathPoints = new MarkupString();
+        SelectedPoints = new MarkupString();
+        PreviewPoints = new MarkupString();
+    }
+
+
+    protected void Clear()
+    {
+        recording = false;
+
+        editPath.Clear();
+
+        cachedIndex = 0;
+        selectedPoint = default;
+        previewPoint = default;
+        X = "0";
+        Y = "0";
+
+        ClearMarkup();
+
+        message = "Cleared...";
+        UpdateRouteMarkup();
+    }
+
+    protected void SaveToFile(bool overwriteClassConfigFile)
+    {
+        recording = false;
+
+        string filename =
+            overwriteClassConfigFile
+            ? Path.ChangeExtension(loadedPathFile, "").TrimEnd('.')
+            : $"{areaName}_{DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss")}";
+
+        string filepath = Path.Join(dataConfig.Path, $"{filename}.json");
+        File.WriteAllText(filepath, JsonConvert.SerializeObject(editPath));
+        message = $"Saved to: {filepath}";
+
+        try
+        {
+            string imgFilepath = Path.Join(dataConfig.Path, $"{filename}.jpg");
+            string mapUrl = wapi.GetMapImage(PlayerReader.WorldMapArea.AreaID);
+
+            PathDrawer.Execute(editPath, mapUrl, imgFilepath);
+        }
+        catch { }
+
+        routeInfo.UpdateRoute(editPath.ToArray());
+    }
+
+    protected void Use()
+    {
+        recording = false;
+        editing = false;
+
+        message = "Current path in use! Not saved to file!";
+
+        routeInfo.UpdateRoute(editPath.ToArray());
+    }
+
+    protected void StartRecording(bool clear)
+    {
+        recording = true;
+        editing = false;
+
+        if (clear)
+        {
+            editPath.Clear();
+            routeInfo.PoiList.Clear();
+        }
+
+        botController.RouteInfo?.SetRouteSource(editPath);
+
+        ClearMarkup();
+
+        message = "Recording...";
+
+        UpdateRouteMarkup();
+    }
+
+    protected bool UpdateRecording()
+    {
+        if (!recording) { return false; }
+
+        Vector3 map = PlayerReader.MapPosNoZ;
+
+        if (editPath.Count == 0 ||
+            map.MapDistanceXYTo(editPath.Last()) > Distance)
+        {
+            editPath.Add(map);
+            UpdateRouteMarkup();
+            return true;
+        }
+
+        return false;
+    }
+
+
+    protected void StartEditing()
+    {
+        recording = false;
+        message = "Editing...";
+        UpdateRouteMarkup();
+        editing = true;
+    }
+
+    protected void UpdatePreviewPoint()
+    {
+        try
+        {
+            previewPoint = new Vector3(float.Parse(X), float.Parse(Y), 0);
+            UpdateRouteMarkup();
+        }
+        catch (Exception ex)
+        {
+            error = ex.Message;
+        }
+    }
+
+    protected void UpdateSourcePoint(ref Vector3 src, Vector3 target)
+    {
+        if (src == default) { return; }
+
+        for (int i = 0; i < editPath.Count; i++)
+        {
+            if (editPath[i] == src)
+            {
+                var temp = editPath[i];
+                temp.X = target.X;
+                temp.Y = target.Y;
+                temp.Z = target.Z;
+                editPath[i] = temp;
+            }
+        }
+
+        src = target;
+        UpdateRouteMarkup();
+    }
+
+    protected void UpdateSelectedWithPlayer()
+    {
+        UpdateSourcePoint(ref selectedPoint, PlayerReader.MapPosNoZ);
+    }
+
+    protected void UpdateSelectedWithPreview()
+    {
+        UpdateSourcePoint(ref selectedPoint, previewPoint);
+    }
+
+    protected void UpdateSelectedPoint(Vector3 point, int index)
+    {
+        this.selectedPoint = point;
+        this.X = point.X.ToString();
+        this.Y = point.Y.ToString();
+
+        cachedIndex = index;
+
+        UpdateRouteMarkup();
+
+        try
+        {
+            UpdateRecording();
+            StateHasChanged();
+        }
+        catch { }
+    }
+
+
+    protected void RemoveAllSelected()
+    {
+        int index = editPath.FindIndex(cachedIndex, p => p == selectedPoint);
+        int removed = editPath.RemoveAll(p => p == selectedPoint);
+        if (removed > 0)
+        {
+            this.previewPoint = selectedPoint;
+
+            if (index > -1 && editPath.Count > 0)
+            {
+                if (index >= editPath.Count)
+                {
+                    index -= removed;
+                }
+
+                this.selectedPoint = editPath[index];
+                cachedIndex = index;
+            }
+            else
+            {
+                this.selectedPoint = default;
+                this.previewPoint = default;
+            }
+        }
+
+        UpdateRouteMarkup();
+    }
+
+
+    protected void Previous()
+    {
+        if (selectedPoint == default) return;
+
+        int index = editPath.FindIndex(cachedIndex, p => p == selectedPoint);
+        if (index > -1)
+        {
+            cachedIndex = index;
+
+            index = Math.Clamp(index - 1, 0, editPath.Count - 1);
+
+            UpdateSelectedPoint(editPath[index], index);
+        }
+    }
+
+    protected void Next()
+    {
+        if (selectedPoint == default) return;
+
+        int index = editPath.FindIndex(cachedIndex, p => p == selectedPoint);
+        if (index > -1)
+        {
+            cachedIndex = index;
+
+            index = Math.Clamp(index + 1, 0, editPath.Count - 1);
+
+            UpdateSelectedPoint(editPath[index], index);
+        }
+    }
+
+
+    protected void InsertPlayerLocationAfterSelected()
+    {
+        if (selectedPoint == default) return;
+
+        int index = editPath.FindIndex(p => p == selectedPoint);
+        if (index == -1) return;
+
+        var target = PlayerReader.MapPosNoZ;
+        target.Z = 0;
+
+        editPath.Insert(index + 1, target);
+
+        selectedPoint = target;
+        UpdateRouteMarkup();
+    }
+
+    protected void HalvenPoints()
+    {
+        editPath = editPath.Where(EverySecondOne).ToList();
+        static bool EverySecondOne(Vector3 v, int i) => i % 2 == 0;
+
+        UpdateRouteMarkup();
+    }
+
+    protected void DoublePoints()
+    {
+        for (int i = 1; i < editPath.Count; i += 2)
+        {
+            Vector3 c = editPath[i];
+            Vector3 p = editPath[i - 1];
+
+            Vector3 newP = new(
+                (c.X + p.X) / 2f,
+                (c.Y + p.Y) / 2f,
+                0);
+
+            editPath.Insert(i, newP);
+        }
+
+        UpdateRouteMarkup();
+    }
+
+    [JSInvokable("PointClick")]
+    public void PointClick(float x, float y, int i)
+    {
+        UpdateSelectedPoint(new Vector3(x, y, 0), i);
+        StateHasChanged();
+    }
+}

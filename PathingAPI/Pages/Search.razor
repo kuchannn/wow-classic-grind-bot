@@ -1,0 +1,99 @@
+﻿@page "/Search"
+
+@inject IJSRuntime jsRuntime
+@inject PPatherService pPatherService
+
+<Watch PathColour="@pathColour" Name="@name" />
+
+<div style="position: fixed; bottom: 0; left: 450px; z-index: 1000; background-color: black; color: white; padding: 0 10px; text-align: center; display: flex; align-items: center;">
+    <SearchParameters OnSearch="OnSearch" IsDisabled="@IsDisabled" OnDraw="OnDraw" />
+</div>
+@code {
+    bool IsDisabled = true;
+
+    SearchStrategy searchType;
+    int pathColour = 1;
+    string name;
+    SearchParam parameters;
+
+    System.Threading.Thread searchPathThread;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await jsRuntime.InvokeVoidAsync("createScene");
+            pPatherService.Reset();
+
+            IsDisabled = false;
+            await InvokeAsync(StateHasChanged);
+        }
+    }
+
+    public async Task OnSearch(SearchParam searchParameters)
+    {
+        if (searchParameters.From == null || searchParameters.To == null)
+        {
+            return;
+        }
+        this.parameters = searchParameters;
+
+        await DoSearch(parameters.SearchType, ((int)parameters.SearchType) + 1, parameters.SearchType.ToString());
+    }
+
+    public void OnDraw(SearchParam searchParameters)
+    {
+        if (searchParameters.From == null || searchParameters.To == null)
+        {
+            return;
+        }
+
+        var mapId = searchParameters.From.Location.W;
+
+        var start = searchParameters.From.Location.AsVector3();
+        var end = searchParameters.To.Location.AsVector3();
+
+        ReadOnlySpan<Vector3> path = [start, end];
+
+        pathColour = (int)Watch.Color.Orange;
+        name = "route";
+        StateHasChanged();
+
+        pPatherService.DrawPath(mapId, path);
+    }
+
+    private async Task DoSearch(SearchStrategy searchType, int colour, string name)
+    {
+        IsDisabled = true;
+
+        this.searchType = searchType;
+        this.pathColour = colour;
+        this.name = name;
+
+        await InvokeAsync(StateHasChanged);
+
+        searchPathThread = new Thread(SearchPathThread);
+        searchPathThread.Start();
+    }
+
+    public async void SearchPathThread()
+    {
+        try
+        {
+            await jsRuntime.InvokeVoidAsync("removeMesh", name);
+            await jsRuntime.InvokeVoidAsync("removeMesh", "search");
+
+            pPatherService.SetLocations(parameters.From.Location, parameters.To.Location);
+
+            var patherPath = pPatherService.DoSearch(searchType);
+
+            IsDisabled = false;
+        }
+        catch (Exception ex)
+        {
+            await jsRuntime.InvokeVoidAsync("log", ex.Message);
+        }
+
+        await InvokeAsync(StateHasChanged);
+    }
+}

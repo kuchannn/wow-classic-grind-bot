@@ -1,0 +1,269 @@
+{
+  //"Mode": "AttendedGrind",
+  "Loot": true,
+  "NPCMaxLevels_Below": 6,
+  "NPCMaxLevels_Above": 1,
+  "PathFilename": "_pack\\60-70\\Terokkar Forest\\62-64.json",
+  "PathThereAndBack": true,
+  "PathReduceSteps": true,
+  "Mount": { "Key": "N0"},
+  "IntVariables": {
+    "MIN_TARGET_HP%": 20,
+    "MIN_HP_BEFORE_HEAL%": 20,
+    "MIN_MANA%": 40,
+    "MIN_HP%": 40,
+    "CD_MIN_TARGET_HP%": 70,
+    "USE_TRINKET_1": 1,
+    "Buff_Art of War": 236246
+  },
+  "Pull": {
+    "Sequence": [
+      {
+        "Name": "Judgement of Wisdom",
+        "Key": "F2",
+        "WhenUsable": true,
+        "BeforeCastDelay": 200,
+        "Requirements": [
+          "SpellInRange:0",
+          "!Judgement of Any",
+          "Mana% <= Health%"
+        ],
+        "AfterCastAuraExpected": true
+      },
+      {
+        "Name": "Judgement of Light",
+        "Key": "F1",
+        "WhenUsable": true,
+        "BeforeCastDelay": 200,
+        "Requirements": [
+          "SpellInRange:0",
+          "!Judgement of Any",
+          "Health% < Mana%"
+        ],
+        "AfterCastAuraExpected": true
+      },
+      {
+        "Name": "Approach",
+        "Requirements": [
+          "CD_Judgement of Wisdom == 0"
+        ]
+      }
+    ]
+  },
+  "Combat": {
+    "Sequence": [
+      {
+        "Name": "Holy Light",
+        "HasCastBar": true,
+        "Key": "5",
+        "Requirements": [
+          "Health% < 50",
+          "Blessing of Protection || Divine Shield || Divine Protection"
+        ]
+      },
+      {
+        "Name": "Hand of Protection",
+        "Key": "N1",
+        "WhenUsable": true,
+        "Requirements": [
+          "Health% < 20"
+        ],
+        "AfterCastAuraExpected": true
+      },
+      {
+        "Name": "Judgement of Wisdom",
+        "Key": "F2",
+        "WhenUsable": true,
+        "BeforeCastDelay": 200,
+        "Requirements": [
+          "SpellInRange:0",
+          "!Judgement of Any",
+          "Mana% <= Health%"
+        ],
+        "AfterCastAuraExpected": true
+      },
+      {
+        "Name": "Judgement of Light",
+        "Key": "F1",
+        "WhenUsable": true,
+        "BeforeCastDelay": 200,
+        "Requirements": [
+          "SpellInRange:0",
+          "!Judgement of Any",
+          "Health% < Mana%"
+        ],
+        "AfterCastAuraExpected": true
+      },
+
+      {
+        "Name": "Trinket 1",
+        "Key": "F10",
+        "Item": true,
+        "WhenUsable": true,
+        "Requirements": [
+          "USE_TRINKET_1 == 1",
+          "TargetHealth% > CD_MIN_TARGET_HP%",
+          "TargetHealth% < 99"
+        ],
+        "AfterCastDelay": 20
+      },
+      {
+        "Name": "Hammer of Justice",
+        "Key": "4",
+        "WhenUsable": true,
+        "Requirements": [
+          "TargetCastingSpell"
+        ],
+        "AfterCastAuraExpected": true
+      },
+      {
+        "Name": "Hammer of Wrath",
+        "Key": "0",
+        "WhenUsable": true,
+        "AfterCastAuraExpected": true
+      },
+      {
+        "Name": "Consecreation",
+        "Key": "3",
+        "WhenUsable": true,
+        "Cooldown": 8000,
+        "Requirements": [
+          "Mana% > MIN_MANA%",
+          "MobCount > 1"
+        ]
+      },
+      {
+        "Name": "Crusader Strike",
+        "Key": "1",
+        "WhenUsable": true,
+        "Requirements": [
+          "InMeleeRange",
+          "Talent:Crusader Strike",
+          "MobCount < 2"
+        ]
+      },
+      {
+        "Name": "Divine Storm",
+        "Key": "2",
+        "WhenUsable": true,
+        "Requirements": [
+          "InMeleeRange",
+          "Talent:Divine Storm",
+          "MobCount > 1"
+        ]
+      },
+      {
+        "Name": "Exorcism",
+        "Key": "7",
+        "WhenUsable": true,
+        "Requirements": [
+          "Buff_Art of War > 0"
+        ]
+      },
+      {
+        "Name": "Flash of Light",
+        "Key": "6",
+        "WhenUsable": true,
+        "Requirements": [
+          "Health% < 70",
+          "Buff_Art of War > 0",
+          "CD_Exorcism > 0"
+        ],
+        "AfterCastAuraExpected": true
+      },
+      {
+        "Name": "AutoAttack"
+      },
+      {
+        "Name": "Approach",
+        "Log": false
+      }
+    ]
+  },
+  "Adhoc": {
+    "Sequence": [
+      {
+        "Cost": 3,
+        "Name": "Gift of the Naaru",
+        "WhenUsable": true,
+        "Key": "N9",
+        "Requirements": [
+          "!Mounted",
+          "Health% < 70",
+          "Race:Draenei"
+        ],
+        "AfterCastAuraExpected": true
+      },
+
+      {
+        "Cost": 3,
+        "Name": "Seal of Vengeance",
+        "Key": "F5",
+        "Requirements": [
+          "!Mounted",
+          "!Seal of Vengeance",
+          "MobCount < 2"
+        ],
+        "AfterCastAuraExpected": true
+      },
+      {
+        "Cost": 3,
+        "Name": "Seal of Command",
+        "Key": "F4",
+        "Requirements": [
+          "!Mounted",
+          "!Seal of Command",
+          "MobCount > 1"
+        ],
+        "AfterCastAuraExpected": true
+      },
+      {
+        "Cost": 3,
+        "Name": "Retribution Aura",
+        "Key": "F8",
+        "InCombat": "i dont care",
+        "WhenUsable": true,
+        "BeforeCastDismount": false,
+        "Requirements": [
+          "!Mounted",
+          "!Form:Paladin_Retribution_Aura"
+        ],
+        "AfterCastAuraExpected": true
+      },
+      {
+        "Name": "Crusader Aura",
+        "Key": "F9",
+        "WhenUsable": true,
+        "BeforeCastDismount": false,
+        "Requirements": [
+          "Mounted",
+          "!Form:Paladin_Crusader_Aura"
+        ],
+        "AfterCastAuraExpected": true
+      },
+      {
+        "Name": "Blessing of Might",
+        "Key": "F11",
+        "Requirements": [
+          "!Mounted",
+          "!Blessing of Might"
+        ],
+        "AfterCastAuraExpected": true
+      }
+    ]
+  },
+  "Parallel": {
+    "Sequence": [
+      {
+        "Name": "Drink",
+        "Key": "-",
+        "Requirement": "Mana% < MIN_MANA%"
+      },
+      {
+        "Name": "Food",
+        "Key": "=",
+        "Requirement": "Health% < MIN_HP%"
+      }
+    ]
+  }
+}

@@ -1,0 +1,280 @@
+{
+  "ClassName": "Hunter",
+  "Mode": "Grind",
+  "Mine": true,
+  "Skin": true,
+  "Herb": false,
+  "Salvage": false,
+  "GatherFindKeyConfig": [
+    {
+      "Name": "Find Minerals",
+      "Key": "F1",
+      "Cooldown": 0
+    },
+    {
+      "Name": "Find Herbs",
+      "Key": "F2", 
+      "Cooldown": 0
+    }
+  ],
+  "Paths": [
+    {
+      "PathFilename": "_pack\\\\1-20\\\\Troll.Orc\\\\10-14_The Barrens.json",
+      "PathThereAndBack": false,
+      "PathReduceSteps": false,
+      "Requirements": [
+        "Level < 35"
+      ]
+    }
+  ],
+  "Pull": {
+    "Sequence": [
+      {
+        "Name": "Concussive Shot",
+        "Key": "9",
+        "BeforeCastStop": true,
+        "Cooldown": 12000,
+        "Requirements": [
+          "HasRangedWeapon",
+          "HasAmmo",
+          "!InMeleeRange"
+        ]
+      },
+      {
+        "Name": "Serpent Sting",
+        "Key": "2",
+        "Cooldown": 4000,
+        "Requirements": [
+          "HasRangedWeapon",
+          "HasAmmo",
+          "!InMeleeRange",
+          "!Serpent Sting",
+          "Mana% > 55"
+        ]
+      }
+    ]
+  },
+  "Combat": {
+    "Sequence": [
+      {
+        "Name": "Gift of the Naaru",
+        "Key": "1",
+        "HasCastBar": true,
+        "WhenUsable": true,
+        "Requirements": [
+          "Race:Draenei",
+          "Health% < 45"
+        ]
+      },
+      {
+        "Name": "Mend Pet",
+        "Key": "N7",
+        "Cooldown": 15000,
+        "Requirements": [
+          "Has Pet",
+          "PetHealth% < 50"
+        ]
+      },
+      {
+        "Name": "Intimidation",
+        "Key": "N4",
+        "Cooldown": 60000,
+        "WhenUsable": true,
+        "Requirements": [
+          "Has Pet"
+        ]
+      },
+      {
+        "Name": "Rapid Fire",
+        "Key": "N3",
+        "Cooldown": 8000,
+        "WhenUsable": true,
+        "Requirements": [
+          "HasRangedWeapon",
+          "HasAmmo",
+          "!InMeleeRange",
+          "TargetHealth% > 90"
+        ]
+      },
+      {
+        "Name": "Auto Shot",
+        "Key": "3",
+        "Item": true,
+        "Requirements": [
+          "HasRangedWeapon",
+          "HasAmmo",
+          "!InMeleeRange",
+          "!AutoShot"
+        ]
+      },
+      {
+        "Name": "Arcane Shot",
+        "Key": "8",
+        "Cooldown": 6000,
+        "WhenUsable": true,
+        "Requirements": [
+          "HasRangedWeapon",
+          "HasAmmo",
+          "!InMeleeRange",
+          "!Rapid Fire",
+          "!Quick Shots",
+          "TargetHealth% > 60",
+          "Mana% > 70"
+        ]
+      },
+      {
+        "Name": "Raptor Strike",
+        "Key": "4",
+        "WhenUsable": true,
+        "AfterCastWaitSwing": true,
+        "AfterCastStepBack": 1000,
+        "Requirements": [
+          "MainHandSwing > -400",
+          "InMeleeRange",
+          "!AutoShot"
+        ]
+      },
+      {
+        "Name": "AutoAttack",
+        "Requirements": [
+          "InMeleeRange",
+          "!AutoShot"
+        ]
+      }
+    ]
+  },
+  "Adhoc": {
+    "Sequence": [
+      {
+        "Name": "Aspect of the Hawk",
+        "Key": "5",
+        "Requirement": "!Aspect of the Hawk"
+      },
+      {
+        "Name": "feedpet",
+        "Key": "N5",
+        "WhenUsable": true,
+        "Cooldown": 20000,
+        "Requirements": [
+          "Has Pet",
+          "!Pet Happy"
+        ]
+      }
+    ]
+  },
+  "Parallel": {
+    "Sequence": [
+      {
+        "Name": "sumpet",
+        "Key": "N6",
+        "HasCastBar": true,
+        "BeforeCastStop": true,
+        "AfterCastWaitBuff": 2000,
+        "Cooldown": 4000,
+        "Requirements": [
+          "!Has Pet"
+        ]
+      },
+      {
+        "Name": "Revive Pet",
+        "Key": "F11",
+        "HasCastBar": true,
+        "BeforeCastStop": true,
+        "AfterCastWaitBuff": 2000,
+        "Cooldown": 6000,
+        "Requirements": [
+          "!Has Pet"
+        ]
+      },
+      {
+        "Name": "Call Pet",
+        "Key": "F12",
+        "Cooldown": 10000,
+        "Requirements": [
+          "!Has Pet"
+        ]
+      },
+      {
+        "Name": "Food",
+        "Key": "6",
+        "Requirement": "Health% < 40"
+      },
+      {
+        "Name": "Drink",
+        "Key": "7",
+        "Requirement": "Mana% < 40"
+      }
+    ]
+  },
+  "NPC": {
+    "Sequence": [
+      {
+        "Cost": 6,
+        "Name": "Repair",
+        "Key": "C",
+        "Requirement": "Durability% < 35",
+        "PathFilename": "1_Orc_Repair.json",
+        "Requirements": [
+          "UIMapId == 14"
+        ]
+      },
+      {
+        "Cost": 6,
+        "Name": "Repair Kravel Koalbeard",
+        "Key": "C",
+        "Requirement": "Durability% < 35",
+        "PathFilename": "_pack/30-40/Thousand Needles/30-35 Mirage Raceway.json",
+        "Requirements": [
+          "UIMapId == 17",
+          "Faction:Horde"
+        ]
+      },
+      {
+        "Cost": 6,
+        "Name": "Repair Fizzle Brassbolts",
+        "Key": "C",
+        "Requirement": "Durability% < 35",
+        "PathFilename": "_pack/30-40/Thousand Needles/30-35 Mirage Raceway.json",
+        "Requirements": [
+          "UIMapId == 17",
+          "Faction:Alliance"
+        ]
+      },
+      {
+        "Cost": 6,
+        "Name": "Sell",
+        "Key": "C",
+        "Requirements": [
+          "BagFull",
+          "BagGreyItem",
+          "UIMapId == 14"
+        ],
+        "PathFilename": "1_Orc_Vendor.json"
+      },
+      {
+        "Cost": 6,
+        "Name": "Sell Kravel Koalbeard",
+        "Key": "C",
+        "Requirements": [
+          "BagFull",
+          "BagGreyItem",
+          "UIMapId == 17",
+          "Faction:Horde"
+        ],
+        "PathFilename": "_pack/30-40/Thousand Needles/30-35 Mirage Raceway.json"
+      },
+      {
+        "Cost": 6,
+        "Name": "Sell Fizzle Brassbolts",
+        "Key": "C",
+        "Requirements": [
+          "BagFull",
+          "BagGreyItem",
+          "UIMapId == 17",
+          "Faction:Alliance"
+        ],
+        "PathFilename": "_pack/30-40/Thousand Needles/30-35 Mirage Raceway.json"
+      }
+    ]
+  }
+}

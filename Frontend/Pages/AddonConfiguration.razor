@@ -1,0 +1,167 @@
+﻿@page "/AddonConfiguration"
+
+@inject ILogger logger
+@inject NavigationManager navigationManager
+@inject AddonConfigurator addonConfigurator
+@inject ExecGameCommand exec
+@inject WowProcess process
+
+@implements IDisposable
+
+<div class="container mt-3">
+    <div class="card">
+        <div class="card-header">
+            <h4>2. Addon Configuration</h4>
+            <p>Configure the addon settings - (@(AddonConfigMeta.DefaultFileName)) file @(AddonConfig.Exists() ? "exists" : "not exists") and @(!addonConfig.IsDefault() ? "valid" : "not valid")</p>
+        </div>
+        <div class="card-body">
+            <div class="alert alert-info">
+                <h6>Setup Instructions:</h6>
+                <ol>
+                    <li>Fill the <strong>Author</strong> input form with your character name</li>
+                    <li>Fill the <strong>Title</strong> input form with a descriptive name</li>
+                    <li>Click <strong>Save</strong> button to install the addon</li>
+                    <li>You should see "AddonConfigurator.Install successful" message</li>
+                    <li>The addon will be automatically installed to your WoW addons directory</li>
+                </ol>
+            </div>
+        </div>
+        <div class="card-body" style="padding-bottom: 0">
+            <table class="table table-bordered">
+                <tbody>
+                    @foreach (var property in addonConfig.GetType().GetProperties())
+                    {
+                        <tr>
+                            @switch (Type.GetTypeCode(property.PropertyType))
+                            {
+                                case TypeCode.String:
+                                    <td>@(property.Name)</td>
+                                    <td>
+                                        <input value="@property.GetValue(addonConfig)?.ToString()"
+                                               class="form-control"
+                                               disabled="@(property.Name.Contains(nameof(addonConfig.Command)) || addonConfigurator.Installed())"
+                                               @onchange="c => { property.SetValue(addonConfig, c.Value); }" />
+                                    </td>
+                                    break;
+                            }
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="container mt-3">
+    <div class="card">
+        <div class="card-header">
+            <h5>Addon Control Panel</h5>
+        </div>
+        <div class="card-body" style="padding-bottom: 0">
+            <table class="table table-bordered">
+                <tbody>
+                    <tr>
+                        <td style="width:25%">Status</td>
+                        <td>
+                            <label class="form-control" disabled>
+                                @AddonStatus()
+                            </label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Install path</td>
+                        <td>
+                            <input value="@addonConfigurator.FinalAddonPath" class="form-control" disabled="true" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Install / Update addon and config</td>
+                        <td>
+                            <button class="btn btn-sm btn-success" @onclick="Install">
+                                <span>Save</span>
+                            </button>
+                        </td>
+                    </tr>
+                    @if (AddonConfig.Exists())
+                    {
+                        <tr>
+                            <td>Delete current addon and config</td>
+                            <td>
+                                <button class="btn btn-sm btn-danger" @onclick="Delete">
+                                    <span>Delete</span>
+                                </button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <hr />
+    <LogComponent />
+</div>
+
+
+@code {
+
+    private AddonConfig addonConfig = null!;
+
+    protected override void OnInitialized()
+    {
+        addonConfigurator.OnChange += OnChanged;
+        addonConfig = addonConfigurator.Config;
+    }
+
+    public void Dispose()
+    {
+        addonConfigurator.OnChange -= OnChanged;
+    }
+
+    public void OnChanged()
+    {
+        base.InvokeAsync(StateHasChanged);
+    }
+
+    private void Delete()
+    {
+        addonConfigurator.Delete();
+        exec.Run("/reload");
+
+        if (FrameConfig.Exists())
+        {
+            navigationManager.NavigateTo("/RestartServer");
+        }
+        else
+        {
+            navigationManager.NavigateTo("/", true);
+        }
+    }
+
+    private void Install()
+    {
+        if (addonConfigurator.Validate())
+        {
+            addonConfigurator.Install();
+            addonConfigurator.Save();
+
+            exec.Run("/reload");
+        }
+    }
+
+    private MarkupString AddonStatus()
+    {
+        if (AddonConfig.Exists() && addonConfigurator.Installed())
+        {
+            if (addonConfigurator.UpdateAvailable())
+            {
+                return new("<p class=\"text-warning\">Update available</p>");
+            }
+            else
+            {
+                return new("<p class=\"text-success\">Up to Date</p>");
+            }
+        }
+
+        return new("<p class=\"text-danger\">Not Installed</p>");
+    }
+}

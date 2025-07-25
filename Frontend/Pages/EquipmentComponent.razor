@@ -1,0 +1,62 @@
+﻿@inject WApi api
+
+<a href="@($"{api.ItemId}{Item.Entry}")" target="_blank" data-wowhead="item=@Item.Entry" class="small" style="text-decoration:none">
+    <img src="@imgLink" />
+</a>
+
+@code {
+    [Parameter]
+    public Item Item { get; set; }
+
+    [Parameter]
+    public int Slot { get; set; }
+
+    [Parameter]
+    public bool ShowIcon { get; set; }
+
+    private string iconName { get; set; } = string.Empty;
+    private string imgLink => ShowIcon && !string.IsNullOrEmpty(iconName) ? string.Format(WApi.MedIconUrl, iconName) : localImg;
+    private string localImg => $"_content/Frontend/img/inventoryslot/{EmptyEquipmentResourceName((InventorySlotId)Slot)}.jpg";
+
+    private static Dictionary<int, string> icons = new();
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (!ShowIcon || Item.Entry == 0)
+        {
+            iconName = string.Empty;
+            return;
+        }
+
+        if (icons.TryGetValue(Item.Entry, out var icon))
+        {
+            iconName = icon;
+            return;
+        }
+
+        iconName = await api.RequestItemIconName(Item.Entry);
+        icons.TryAdd(Item.Entry, iconName);
+    }
+
+    private string EmptyEquipmentResourceName(InventorySlotId i)
+    {
+        switch (i)
+        {
+            case InventorySlotId.Trinket_1:
+            case InventorySlotId.Trinket_2:
+                return "trinket";
+            case InventorySlotId.Finger_1:
+            case InventorySlotId.Finger_2:
+                return "finger";
+            case InventorySlotId.Back:
+                return InventorySlotId.Chest.ToStringF().ToLower();
+            case InventorySlotId.Bag_0:
+            case InventorySlotId.Bag_1:
+            case InventorySlotId.Bag_2:
+            case InventorySlotId.Bag_3:
+                return "bag";
+            default:
+                return i.ToStringF().ToLower();
+        }
+    }
+}

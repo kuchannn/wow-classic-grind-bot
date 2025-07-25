@@ -1,0 +1,315 @@
+{
+  "ClassName": "Warrior",
+  //"Mode": "AttendedGrind", //Grind
+  //"KeyboardOnly": true,
+  "PathFilename": "_pack\\60-70\\Terokkar Forest\\62-64.json",
+  "NPCMaxLevels_Above": 4,
+  "NPCMaxLevels_Below": 10,
+  "PathThereAndBack": true,
+  "PathReduceSteps": false,
+  "Mount": { "Key": "N0"},
+  "IntVariables": {
+    "CD_MIN_TARGET_HP%": 70,
+    "MIN_RAGE_HEROIC_STRIKE": 42,
+    "Buff_Battle Shout": 132333,
+    "Buff_Taste of Blood": 236276,
+    "USE_TRINKET_1": 0,
+    "USE_TRINKET_2": 0
+  },
+  "Form": {
+    "Sequence": [
+      {
+        "Name": "Battle Stance",
+        "Key": "F1",
+        "Form": "Warrior_BattleStance"
+      },
+      {
+        "Name": "Defensive Stance",
+        "Key": "F2",
+        "Form": "Warrior_DefensiveStance"
+      },
+      {
+        "Name": "Berserker Stance",
+        "Key": "F3",
+        "Form": "Warrior_BerserkerStance"
+      }
+    ]
+  },
+  "Pull": {
+    "Sequence": [
+      {
+        "Name": "Shoot",
+        "Key": "9",
+        "Item": true,
+        "WhenUsable": true,
+        "BeforeCastStop": true,
+        "AfterCastWaitMeleeRange": true,
+        "Requirements": [
+          "AddVisible",
+          "HasRangedWeapon && !Items Broken",
+          "!InMeleeRange && (SpellInRange:2 || SpellInRange:3)"
+        ]
+      },
+      {
+        "Name": "Charge",
+        "Key": "3",
+        "WhenUsable": true,
+        "Requirement": "SpellInRange:0 && !InMeleeRange",
+        "Form": "Warrior_BattleStance",
+        "AfterCastWaitMeleeRange": true
+      },
+      {
+        "Name": "Approach",
+        "Requirements": [
+          "CD_Charge > 0"
+        ]
+      }
+    ]
+  },
+  "Combat": {
+    "Sequence": [
+      {
+        "Name": "Retaliation",
+        "Key": "N1",
+        "WhenUsable": true,
+        "Requirement": "MobCount > 1",
+        "Form": "Warrior_BattleStance"
+      },
+      {
+        "Name": "Bloodrage",
+        "Key": "8",
+        "WhenUsable": true,
+        "Requirements": [
+          "Health% > 50",
+          "Rage < Cost_Mortal Strike"
+        ]
+      },
+      {
+        "Name": "Berserker Rage",
+        "Key": "F9",
+        "WhenUsable": true,
+        "Requirements": [
+          "Rage < Cost_Mortal Strike"
+        ]
+      },
+      {
+        "Name": "Death Wish",
+        "Key": "F5",
+        "WhenUsable": true,
+        "Requirements": [
+          "TargetHealth% > CD_MIN_TARGET_HP%",
+          "TargetHealth% < 95"
+        ]
+      },
+      {
+        "Name": "Trinket 1",
+        "Key": "F6",
+        "Item": true,
+        "WhenUsable": true,
+        "Requirements": [
+          "USE_TRINKET_1 == 1",
+          "TargetHealth% > CD_MIN_TARGET_HP%",
+          "TargetHealth% < 95",
+          "Health% < 80"
+        ],
+        "AfterCastDelay": 20
+      },
+      {
+        "Name": "Trinket 2",
+        "Key": "F7",
+        "Item": true,
+        "WhenUsable": true,
+        "Requirements": [
+          "USE_TRINKET_2 == 1",
+          "TargetHealth% > CD_MIN_TARGET_HP%"
+        ],
+        "AfterCastDelay": 20
+      },
+      {
+        "Name": "HP Potion",
+        "Key": "F8",
+        "WhenUsable": true,
+        "Requirements": [
+          "Health% < 15"
+        ]
+      },
+      {
+        "Name": "Pummel",
+        "Key": "-",
+        "WhenUsable": true,
+        "Form": "Warrior_BerserkerStance",
+        "UseWhenTargetIsCasting": true,
+        "Requirements": [
+          "Form:Warrior_BerserkerStance"
+        ]
+      },
+      {
+        "Name": "Thunder Clap",
+        "Key": "6",
+        "WhenUsable": true,
+        "Cooldown": 16000,
+        "Requirements": [
+          "!Thunder Clap",
+          "Form:Warrior_BattleStance && MobCount > 1"
+        ]
+      },
+      {
+        "Name": "Overpower",
+        "Key": "0",
+        "WhenUsable": true,
+        "Cooldown": 5000,
+        "Requirements": [
+          "(LastTargetDodgeMs > 0 && LastTargetDodgeMs < 5000) || Buff_Taste of Blood > 0"
+        ],
+        "Form": "Warrior_BattleStance"
+      },
+      {
+        "Name": "Execute",
+        "Key": "7",
+        "WhenUsable": true
+      },
+      {
+        "Name": "Cleave",
+        "Key": "1",
+        "WhenUsable": true,
+        "Requirements": [
+          "MainHandSwing > -400",
+          "MobCount > 1"
+        ],
+        "AfterCastWaitSwing": true
+      },
+      {
+        "Name": "Mortal Strike",
+        "Key": "N2",
+        "WhenUsable": true,
+        "Requirements": [
+          "Talent:Mortal Strike",
+          "MainHandSwing < -400",
+          "MobCount < 2",
+          "TargetHealth% > 20"
+        ]
+      },
+      {
+        "Name": "Heroic Strike",
+        "Key": "2",
+        "WhenUsable": true,
+        "Requirements": [
+          "MainHandSwing > -400",
+          "MobCount < 2",
+          "TargetHealth% > 20",
+          "Rage >= MIN_RAGE_HEROIC_STRIKE"
+        ],
+        "AfterCastWaitSwing": true
+      },
+      {
+        "Name": "Victory Rush",
+        "Key": "F10",
+        "WhenUsable": true
+      },
+      {
+        "Name": "Rend",
+        "Key": "5",
+        "WhenUsable": true,
+        "Requirements": [
+          "!Rend",
+          "TargetHealth% > 50",
+          "Form:Warrior_BattleStance"
+        ],
+        "Form": "Warrior_BattleStance"
+      },
+      {
+        "Name": "Berserker Stance",
+        "Key": "F3",
+        "WhenUsable": true,
+        "Requirements": [
+          "Rend",
+          "MobCount < 2",
+          "Rage <= 15",
+          "Form:Warrior_BattleStance"
+        ]
+      },
+      {
+        "Name": "Battle Stance",
+        "Key": "F1",
+        "WhenUsable": true,
+        "Requirements": [
+          "MobCount > 1",
+          "Rage <= 15",
+          "Form:Warrior_BerserkerStance"
+        ]
+      },
+      {
+        "Name": "AutoAttack"
+      },
+      {
+        "Name": "Approach",
+        "Log": false
+      }
+    ]
+  },
+  "Adhoc": {
+    "Sequence": [
+      {
+        "Cost": 3.1,
+        "Name": "Battle Shout",
+        "Key": "4",
+        "InCombat": "i dont care",
+        "WhenUsable": true,
+        "Requirements": [
+          "!Mounted",
+          "!Battle Shout || Buff_Battle Shout < 10000"
+        ],
+        "AfterCastAuraExpected": true
+      },
+      {
+        "Name": "Food",
+        "Key": "=",
+        "Requirement": "Health% < 45",
+        "Cost": 3
+      },
+      {
+        "Cost": 18,
+        "Name": "sharpen",
+        "Key": "F4",
+        "WhenUsable": true,
+        "HasCastbar": true,
+        "Requirement": "!HasMainHandEnchant",
+        "AfterCastWaitCastbar": true,
+        "AfterCastAuraExpected": true
+      }
+    ]
+  },
+  "Wait": {
+    "Sequence": [
+      {
+        "Cost": 19,
+        "Name": "HP regen",
+        "Requirements": [
+          "FoodCount == 0 || !Usable:Food",
+          "Health% < 50"
+        ]
+      }
+    ]
+  },
+  "NPC": {
+    "Sequence": [
+      {
+        "Name": "Repair",
+        "Key": "C",
+        "Requirement": "Durability% < 35",
+        "PathFilename": "60_Hellfire Peninsula_Honor Hold_Vendor.json",
+        "Cost": 6
+      },
+      {
+        "Name": "Sell",
+        "Key": "C",
+        "Requirements": [
+          "BagFull",
+          "BagGreyItem"
+        ],
+        "PathFilename": "60_Hellfire Peninsula_Honor Hold_Vendor.json",
+        "Cost": 6
+      }
+    ]
+  }
+}

@@ -1,0 +1,44 @@
+﻿@using System.Collections.Specialized
+
+@implements IDisposable
+
+@inject ChatReader reader
+
+<div class="col-sm" style="@(MaxHeight > 0 ? $"overflow: auto; max-height: {MaxHeight}px;" : string.Empty)">
+    @foreach (var cme in reader.Messages.Reverse())
+    {
+        <p style="color:@(typeColor[(int)cme.Type])" class="mb-0">
+            <span>@cme.Time.ToString("HH:mm:ss")</span>
+            <span>@cme.Author:</span>
+            <span>@cme.Message</span>
+        </p>
+    }
+</div>
+
+@code {
+    [Parameter]
+    public int MaxHeight { get; set; } = 400;
+
+    private static readonly string[] typeColor = {
+        "#FF80FF",   // ChatMessageType.Whisper
+        "",         // ChatMessageType.Say
+        "red",      // ChatMessageType.Yell
+        "orange",   // ChatMessageType.Emote
+        "cyan",    // ChatMessageType.Party
+    };
+
+    protected override void OnInitialized()
+    {
+        reader.Messages.CollectionChanged += Changed;
+    }
+
+    public void Dispose()
+    {
+        reader.Messages.CollectionChanged -= Changed;
+    }
+
+    private void Changed(object? s, NotifyCollectionChangedEventArgs e)
+    {
+        base.InvokeAsync(StateHasChanged);
+    }
+}

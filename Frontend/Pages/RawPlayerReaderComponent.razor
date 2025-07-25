@@ -1,0 +1,134 @@
+﻿@using System.Reflection
+
+@inject IAddonReader addonReader
+@inject PlayerReader PlayerReader
+@inject AddonBits bits
+@inject SpellInRange spellInRange
+@inject BuffStatus<IPlayer> playerbuffs
+@inject BuffStatus<IFocus> focusbuffs
+@inject CombatLog combatLog
+@inject ActionBarCostReader costReader
+@inject SessionStat sessionStat
+@inject GossipReader gossipReader
+@inject ActionBarBits<ICurrentAction> currentAction
+
+@implements IDisposable
+
+<div class="container">
+    <div class="card">
+        <div class="card-header">
+            AddonReader
+        </div>
+        <div class="card-body" style="padding-bottom: 0">
+            <TableOfComponent Obj="@addonReader" />
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            PlayerReader
+        </div>
+        <div class="card-body" style="padding-bottom: 0">
+            <TableOfComponent Obj="@PlayerReader" />
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-header">
+            AddonBits
+        </div>
+        <div class="card-body" style="padding-bottom: 0">
+            <TableOfComponent Obj="@bits" />
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            CurrentAction
+        </div>
+        <div class="card-body" style="padding-bottom: 0">
+            <TableOfComponent Obj="@currentAction" />
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            SpellInRange
+        </div>
+        <div class="card-body" style="padding-bottom: 0">
+            <TableOfComponent Obj="@spellInRange" />
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            CombatLog
+        </div>
+        <div class="card-body" style="padding-bottom: 0">
+            <TableOfComponent Obj="@combatLog" />
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            Player Buffs
+        </div>
+        <div class="card-body" style="padding-bottom: 0">
+            <TableOfComponent Obj="@playerbuffs" />
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            Focus Buffs
+        </div>
+        <div class="card-body" style="padding-bottom: 0">
+            <TableOfComponent Obj="@focusbuffs" />
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            Actionbar Cost Reader
+        </div>
+        <div class="card-body" style="padding-bottom: 0">
+            <TableOfComponent Obj="@costReader" />
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            Session Stats
+        </div>
+        <div class="card-body" style="padding-bottom: 0">
+            <TableOfComponent Obj="@sessionStat" />
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            Gossip
+        </div>
+        <div class="card-body" style="padding-bottom: 0">
+            <TableOfComponent Obj="@gossipReader" />
+        </div>
+    </div>
+</div>
+
+@code {
+
+    protected override void OnInitialized()
+    {
+        addonReader.AddonDataChanged += OnAddonDataChanged;
+    }
+
+    public void Dispose()
+    {
+        addonReader.AddonDataChanged -= OnAddonDataChanged;
+    }
+
+    private void OnAddonDataChanged()
+    {
+        base.InvokeAsync(StateHasChanged);
+    }
+
+}
