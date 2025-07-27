@@ -43,6 +43,11 @@ public sealed partial class ClassConfiguration
     public bool AllowPvP { get; set; }
     public bool AutoPetAttack { get; set; } = true;
 
+    // Relogger settings
+    public bool EnableRelogger { get; set; } = true;
+    public int ReloggerMaxAttempts { get; set; } = 5;
+    public int ReloggerTimeoutSeconds { get; set; } = 120;
+
     public int VendorOpenDelayMs { get; set; } = 5000;
 
     // Keeping this for backward compatibility

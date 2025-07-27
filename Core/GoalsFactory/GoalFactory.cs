@@ -64,6 +64,9 @@ public static class GoalFactory
             services.AddScoped<GoapGoal, BlacklistTargetGoal>();
         }
 
+        // ReloggerGoal should be available for all modes
+        services.AddScoped<GoapGoal, ReloggerGoal>();
+
         services.AddScoped<NpcNameTargeting>();
 
         // Goals components

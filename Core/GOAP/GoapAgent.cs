@@ -252,6 +252,9 @@ public sealed partial class GoapAgent : IDisposable
         bool dmgDone = combatLog.DamageDoneCount() > 0;
         bool hasTarget = b.Target();
         bool playerCombat = b.Combat();
+        
+        // Detect disconnection: addon data is stale for more than 5 seconds
+        bool isDisconnected = addonReader.GlobalTime.ElapsedMs() > 5000;
 
         int data =
             (B(hasTarget) << (int)GoapKey.hastarget) |
@@ -279,6 +282,7 @@ public sealed partial class GoapAgent : IDisposable
             (B(State.ShouldConsumeCorpse) << (int)GoapKey.consumecorpse) |
             (B(b.Swimming()) << (int)GoapKey.isswimming) |
             (B(b.Items_Broken()) << (int)GoapKey.itemsbroken) |
+            (B(isDisconnected) << (int)GoapKey.isdisconnected) |
             (B(State.Gathering) << (int)GoapKey.gathering) |
             (B(b.Target_Hostile() || (bits.Target() && combatLog.ToPull.Contains(playerReader.TargetGuid))) << (int)GoapKey.targethostile) |
             (B(b.Focus()) << (int)GoapKey.hasfocus) |
